@@ -11,24 +11,31 @@ using namespace std;
 Player::Player(const string &name, int money, int posn, int timsCup, bool inTimsLine):
     name{name}, money{1500}, posn{0}, timsCup{0}, inTimsLine{false}{}
 
+Player::~Player() {
+ for (Building* b : buildingsOwned) {
+        delete b;
+    }
+    buildingsOwned.clear();
+}
+
 void Player::roll() {
     int die1 = prng(1, 6);
     int die2 = prng(1, 6);
     int steps = die1 + die2;
-    cout << name << "rolled a " << die1 << "and a " << die2 << endl;
+    cout << name << " rolled a " << die1 << " and a " << die2 << endl;
     move(steps);
 }
 
 void Player::move(int steps) {
     posn += steps;
     posn = posn % 40; // if posn hits 40 reset to 0
-    cout << name << "moved "  << steps << "steps " << endl;
+    cout << name << " moved "  << steps << " steps" << endl;
 }
-
-int Player::getTimsCupVal() {return timsCup}
-int Player::getMoney() {return money}
-int Player::getPosn() {return posn}
-void Player::atTimsLineSwitch(){inTimsLine = !inTimsLine}
+void Player::receivedCup(){return ++timsCup;}
+int Player::getTimsCupVal() {return timsCup;}
+int Player::getMoney() {return money;}
+int Player::getPosn() {return posn;}
+void Player::atTimsLineSwitch(){inTimsLine = !inTimsLine;}
 
 void Player::pay(int amount) {
     if (money >= amount) {
@@ -41,12 +48,19 @@ void Player::pay(int amount) {
 void Player::receive(int amount) {
     money += amount;
 }
+void Player::bankrupt(Player *other) {
+    for (size_t i = 0; i < buildingsOwned.size(); i++) {
+        other->buildingsOwned.push_back(buildingsOwned[i]);
+    }
+    buildingsOwned.clear();
+}
 
 void Player::assets() {
     for (auto b: buildingsOwned) {
         cout << "Building Name: " << b->getName() << "Building Value: " << b->getValue() << endl;
     }
 }
+
 
 void Player::trade (Player *other, int amount, const string &receiving) {
     if (money >= amount) {
@@ -55,7 +69,7 @@ void Player::trade (Player *other, int amount, const string &receiving) {
         for (auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ) {
             if ((*it)->getName() == receiving) {
                 // Add the building pointer to our list.
-                buildingsOwned.push_back(*it);
+                buildingsOwned.emplace_back(*it);
                 // Erase from the other player's vector and update iterator.
                 it = other->buildingsOwned.erase(it);
                 return;
@@ -68,6 +82,7 @@ void Player::trade (Player *other, int amount, const string &receiving) {
 
 }
 
+//overloaded trade function
 void Player::trade(Player *other, const string &trading, const string &receiving) {
     vector<Building*>::iterator itTrading = buildingsOwned.end();
     for (std::vector<Building*>::iterator it = buildingsOwned.begin(); it != buildingsOwned.end(); ++it) {
