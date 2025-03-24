@@ -4,15 +4,15 @@ import <iostream>;
 import <string>;
 import <sstream>;
 import <vector>;
-import building; // havent made building yet
+import square; // havent made building yet
 using namespace std;
 
-class Player {
+export class Player {
     private:
     string name;
     int money, posn, timsCups;
     bool inTimsLine;
-    vector<Building*> buildingsOwned;
+    vector<Square*> buildingsOwned;
 
     public:
     Player(const string &name, int money, int posn, int timsCups, bool inTimsLine);
