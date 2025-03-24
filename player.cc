@@ -22,6 +22,7 @@ class Player {
     int getTimsCupsVal();
     int getMoney();
     int getPosn();
+    void addBuilding(Building *b);
     void receivedCup();
     void atTimsLineSwitch();
     void pay(int amount);

@@ -31,6 +31,7 @@ void Player::move(int steps) {
     posn = posn % 40; // if posn hits 40 reset to 0
     cout << name << " moved "  << steps << " steps" << endl;
 }
+void Player::addBuilding(Building *b) {buildingsOwned.emplace_back(b);}
 void Player::receivedCup(){return ++timsCup;}
 int Player::getTimsCupVal() {return timsCup;}
 int Player::getMoney() {return money;}
@@ -45,9 +46,11 @@ void Player::pay(int amount) {
         cout << "insufficient funds" << endl;
     }
 }
+
 void Player::receive(int amount) {
     money += amount;
 }
+
 void Player::bankrupt(Player *other) {
     for (size_t i = 0; i < buildingsOwned.size(); i++) {
         other->buildingsOwned.push_back(buildingsOwned[i]);
@@ -60,7 +63,6 @@ void Player::assets() {
         cout << "Building Name: " << b->getName() << "Building Value: " << b->getValue() << endl;
     }
 }
-
 
 void Player::trade (Player *other, int amount, const string &receiving) {
     if (money >= amount) {
