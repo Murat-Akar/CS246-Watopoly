@@ -1,14 +1,10 @@
 module textobserver;
-
 import <iostream>;
 import <string>;
-import <vector>;
-import player;
 using namespace std;
 
-TextObserver::TextObserver(std::vector<Player*> players, int width, int height)
-    : players{move(players)}, width{width}, height{height} {
-        
+TextObserver::TextObserver(vector<Player*> players, vector<Square*> squares)
+    : players{move(players)}, squares{move(squares)} {
     for (auto* p : this->players) {
         p->attach(this);
     }
@@ -21,15 +17,14 @@ TextObserver::~TextObserver() {
 }
 
 void TextObserver::notify() {
-    // Each square returns 5 lines
     const int linesPerSquare = 5;
 
     // -------- TOP ROW (squares 20 to 30) --------
     for (int line = 0; line < linesPerSquare; ++line) {
         for (int i = 20; i <= 30; ++i) {
-            std::cout << squares[i]->print_square()[line];
+            cout << squares[i]->print_square()[line];
         }
-        std::cout << '\n';
+        cout << '\n';
     }
 
     // -------- MIDDLE 9 ROWS (LEFT and RIGHT columns) --------
@@ -42,8 +37,8 @@ void TextObserver::notify() {
 
         for (int line = 0; line < linesPerSquare; ++line) {
             cout << leftLines[line]
-                      << string(63, ' ')  // space between left and right
-                      << rightLines[line] << '\n';
+                 << string(63, ' ')
+                 << rightLines[line] << '\n';
         }
     }
 
@@ -55,4 +50,5 @@ void TextObserver::notify() {
         cout << '\n';
     }
 }
+
 
