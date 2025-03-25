@@ -15,8 +15,13 @@ void PurchasableSquare::buy(Player *p) {
     if (owner == nullptr && p->getMoney() >= propertyValue) {
         p->pay(propertyValue);
         owner = p;
+        p->buildingsOwned.emplace_back(this);
+        cout << p->getName() << " purchased " << getName() << " for $" << propertyValue << endl;
     }
     else {
         cout << "Insufficient Funds For Purchase" << endl;
     }
 }
+
+void PurchasableSquare::mortgage() {} //not sure what to add
+void PurchasableSqaure::unmortgage() {} //not sure what to add here
