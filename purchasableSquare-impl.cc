@@ -10,12 +10,11 @@ import propertyData;
 using namespace std;
 
 PurchasableSquare::PurchasableSquare(const string &name, int posn, int propertyValue, bool ownable,
-    const string &monopolyblockId, int improvementLevels, bool monopoly, Player *owner, bool mortgaged)
+    const string &monopolyblockId, int improvementLevels, Player *owner, bool mortgaged)
     : Square(name, posn, propertyValue, ownable),
       monopolyblockId(monopolyblockId),
       improvementLevels(improvementLevels),
       owner(owner),
-      monopoly(monopoly),
       mortgaged(mortgaged)
 {
     
@@ -53,7 +52,7 @@ bool PurchasableSquare::landOn(Player *p) {
                 return false;
             }
             int rent = 0;
-            if (improvementLevels == 0 && !isMonopoly(p)) {
+            if (improvementLevels == 0 && !isMonopoly(p, monopolyblockID)) {
                 rent = pd->rentTable[0] * 2;  // double the base rent if no improvements and no monopoly?
             } else {
                 rent = pd->rentTable[improvementLevels];
@@ -71,8 +70,7 @@ bool PurchasableSquare::landOn(Player *p) {
     }
 }
 
- bool isMonopoly(Player *p) {
-
+bool isMonopoly(Player *p, const std::string &monopolyId) {
     int totalCount = 0;
     const auto &db = PropertyData::getAcademicData();
     for (const auto &entry : db) {
@@ -80,7 +78,6 @@ bool PurchasableSquare::landOn(Player *p) {
             totalCount++;
         }
     }
-
     int ownedCount = 0;
     for (Square *s : p->buildingsOwned) {
         PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
@@ -88,7 +85,6 @@ bool PurchasableSquare::landOn(Player *p) {
             ownedCount++;
         }
     }
-
     return (ownedCount == totalCount && totalCount > 0);
 }
 
