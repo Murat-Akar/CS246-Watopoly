@@ -4,6 +4,7 @@ import <vector>;
 using namespace std;
 export struct PropertyData {
     string monopolyblockID;
+    bool improvable;
     int purchase_cost;
     int improvement_cost;
     vector<int> rentTable;
