@@ -5,6 +5,7 @@ import <sstream>;
 import <vector>;
 import square;
 import player;
+import propertyData;
 using namespace std;
 
 export class PurchasableSquare : public Square {
@@ -18,5 +19,6 @@ export class PurchasableSquare : public Square {
     void buy(Player *p);
     void mortgage();
     void unmortgage();
+    bool landOn(Player *p) override;
     // gonna have to add a Improvable? function to make sure that there is a monopoly before improvements 
 }

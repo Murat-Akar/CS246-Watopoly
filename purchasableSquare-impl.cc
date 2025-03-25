@@ -5,6 +5,8 @@ import <sstream>;
 import <vector>;
 import square;
 import player;
+import propertyData;
+
 using namespace std;
 
 PurchasableSquare::PurchasableSquare(const string &name, const int posn, int propertyValue, 
@@ -20,6 +22,23 @@ void PurchasableSquare::buy(Player *p) {
     }
     else {
         cout << "Insufficient Funds For Purchase" << endl;
+    }
+}
+
+bool PurchasableSquare::landOn(Player *p) {
+    if (owner == nullptr) {
+        cout << p->getName() << " landed on " << getName() 
+             << ". This property is unowned and costs $" << propertyValue << "." << endl;
+        return true; // if true ask player if they want to buy
+    }
+    else if (owner != p) {
+        if (mortgaged) {
+            cout << p->getName() << " landed on " << getName() 
+            << ", but it is mortgaged. No rent is due." << endl;
+        }
+        else {
+            // if not mortgaged, 
+        }
     }
 }
 
