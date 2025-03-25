@@ -12,11 +12,15 @@ export class PurchasableSquare : public Square {
     private:
     Player *owner;
     bool mortgaged;
+    string monopolyblockId;
+    int improvementLevels;
     public:
-    PurchasableSquare(const string &name, const int posn, int propertyValue, bool ownable
-                      Player *owner, bool mortgaged);
+    PurchasableSquare(const string &name, int posn, int propertyValue, bool ownable,
+        const string &monopolyblockId, int improvementLevels, 
+        bool monopoly = false, Player *owner = nullptr, bool mortgaged = false);
     
     void buy(Player *p);
+    bool isMonopoly(Player *p);
     void mortgage();
     void unmortgage();
     bool landOn(Player *p) override;
