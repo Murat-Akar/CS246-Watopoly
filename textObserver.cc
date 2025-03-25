@@ -2,17 +2,17 @@ export module textobserver;
 
 import observer;
 import player;
+import square;
 import <vector>;
 using namespace std;
 
 export class TextObserver : public Observer {
-  private:
+private:
     vector<Player*> players;
-    int width;
-    int height;
+    vector<Square*> squares;
 
-  public:
-    TextObserver(vector<Player*> players, int width, int height);
+public:
+    TextObserver(vector<Player*> players, vector<Square*> squares);
     void notify() override;
     ~TextObserver();
 };

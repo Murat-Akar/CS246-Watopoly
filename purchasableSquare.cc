@@ -16,8 +16,8 @@ export class PurchasableSquare : public Square {
     int improvementLevels;
     public:
     PurchasableSquare(const string &name, int posn, int propertyValue, bool ownable,
-        const string &monopolyblockId, int improvementLevels, 
-        bool monopoly = false, Player *owner = nullptr, bool mortgaged = false);
+        const string &monopolyblockId, int improvementLevels,
+        Player *owner = nullptr, bool mortgaged = false);
     
     void buy(Player *p);
     bool isMonopoly(Player *p);
