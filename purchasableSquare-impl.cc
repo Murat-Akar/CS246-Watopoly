@@ -92,6 +92,36 @@ bool PurchasableSquare::landOn(Player *p) {
     return (ownedCount == totalCount && totalCount > 0);
 }
 
+void PurchasableSquare::mortgage() {
+    // Ensure that improvements are sold before mortgaging
+    if (improvementLevels > 0) {
+        cout << "You must sell improvements before mortgaging this property." << endl;
+        return;
+    }
 
-void PurchasableSquare::mortgage() {} //not sure what to add
-void PurchasableSqaure::unmortgage() {} //not sure what to add here
+    // Mortgaging the property and giving the player 50% of the property value
+    if (!mortgaged) {
+        int mortgageValue = propertyValue / 2;  // Calculatting 50% of the property's value
+        owner->receive(mortgageValue);  // Giving the player the mortgage amount
+        mortgaged = true;  // Marking the property as mortgaged
+        cout << owner->getName() << " has mortgaged " << getName() << " for $" << mortgageValue << endl;
+    } else {
+        cout << getName() << " is already mortgaged." << endl;
+    }    
+} 
+
+void PurchasableSqaure::unmortgage() {
+     // If property is mortgaged, unmortgage it
+    if (mortgaged) {
+        int unmortgageCost = (propertyValue * 60) / 100;  // Calculating 60% of the property's value
+        if (owner->getMoney() >= unmortgageCost) {
+            owner->pay(unmortgageCost);  // Paying the unmortgage cost (60% of the property value)
+            mortgaged = false;  // Marking the property as unmortgaged
+            cout << owner->getName() << " has unmortgaged " << getName() << " by paying $" << unmortgageCost << endl;
+        } else {
+            cout << "Insufficient funds to unmortgage " << getName() << "." << endl;
+        }
+    } else {
+        cout << getName() << " is not mortgaged." << endl;
+    }
+} 
