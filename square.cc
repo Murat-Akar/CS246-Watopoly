@@ -19,4 +19,6 @@ export class Square {
     int getRent();
     int getPosition() const;
     bool isPurchasable();
+
+    virtual vector<string> print_square() const;
 };
