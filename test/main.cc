@@ -17,6 +17,8 @@
 
 using namespace std;
 
+static int totalCups = 0;
+
 int main() {
     // Create players.
     vector<Player*> players;
