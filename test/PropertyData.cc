@@ -1,5 +1,4 @@
 #include "PropertyData.h"
-#include <cassert>
 
 const map<string, PropertyData>& PropertyData::getAcademicData() {
     static const map<string, PropertyData> data = {
