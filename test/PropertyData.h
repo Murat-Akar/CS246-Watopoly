@@ -15,7 +15,7 @@ struct PropertyData {
 
     // Returns a reference to a static map containing the property data.
     static const map<string, PropertyData>& getAcademicData();
-
+    
     // Look up a property's data by its name.
     static const PropertyData* lookup(const string &name);
 

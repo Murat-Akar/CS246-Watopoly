@@ -10,8 +10,6 @@ Player::Player(const string &name, int money, int posn, int timsCup, bool inTims
     : name{name}, money(money), posn(posn), timsCups(timsCup), inTimsLine(inTimsLine) {}
 
 Player::~Player() {
-    for(auto s : buildingsOwned)
-        delete s;
     buildingsOwned.clear();
 }
 
@@ -76,6 +74,8 @@ void Player::bankrupt(Player *other) {
 void Player::assets() const {
     for(auto s : buildingsOwned)
         cout << "Building: " << s->getName() << endl;
+
+    cout << "You also have $" << getMoney() << endl;
 }
 
 void Player::setPosition(int position) {

@@ -19,6 +19,9 @@ void PurchasableSquare::buy(Player *p) {
         cout << p->getName() << " purchased " << getName() 
              << " for $" << getRent() << endl;
     }
+    else if (owner != nullptr) {
+        cout << "Sorry " << owner->getName() << " owns this." << endl;
+    }
     else {
         cout << "Insufficient Funds For Purchase" << endl;
     }

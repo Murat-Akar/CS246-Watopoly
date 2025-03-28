@@ -97,31 +97,45 @@ int main() {
     bool gameOver = false;
     int currentPlayerIndex = 0;
     while (!gameOver) {
+      bool command_loop = true;
+      while (command_loop) {
         Player *p = players[currentPlayerIndex];
         cout << "\n" << p->getName() << "'s turn. (roll/next/buy/assets/trade/quit): ";
         string cmd;
         cin >> cmd;
+        int pos = p->getPosn();
         if (cmd == "roll") {
             p->roll();
-            int pos = p->getPosn();
+            pos = p->getPosn();
             cout << p->getName() << " landed on square " << pos << ".\n";
             board[pos]->landOn(p);
         } else if (cmd == "buy") {
-            cout << "Buy command selected. (Not implemented yet.)\n";
+            PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
+            if (ps) {
+                ps->buy(p);
+            } else {
+                cout << "This square is not purchasable. " << endl;
+            }
         } else if (cmd == "assets") {
-            cout << "Assets command selected. (Not implemented yet.)\n";
+            p->assets();
         } else if (cmd == "trade") {
+            PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
+            if (!ps) cout << "This square is not tradeable" << endl;
             cout << "Trade command selected. (Not implemented yet.)\n";
         } else if (cmd == "next") {
             // End current turn.
+            command_loop = false;
         } else if (cmd == "quit") {
+            command_loop = false;
             gameOver = true;
             cout << "Game Over!\n";
+            continue;
         } else {
             cout << "Unknown command." << endl;
         }
         cout << " " << setfill('_') << setw(98) << "_" << endl;
         observer.notify();
+      }
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
 
