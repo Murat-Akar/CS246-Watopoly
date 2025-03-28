@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <iomanip>
 #include "Player.h"
 #include "Square.h"
 #include "CollectOSAPSquare.h"
@@ -119,6 +120,7 @@ int main() {
         } else {
             cout << "Unknown command." << endl;
         }
+        cout << " " << setfill('_') << setw(98) << "_" << endl;
         observer.notify();
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
