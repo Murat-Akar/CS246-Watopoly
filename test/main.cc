@@ -26,6 +26,7 @@ int main() {
     cout << "Enter the Number of Players (2 - 6): " << endl;
     int num_of_players = 0;
     while (true) {
+        
         if (!(cin >> num_of_players)) {
             cin.clear();
             cin.ignore();
@@ -40,13 +41,31 @@ int main() {
     cin.ignore();
 
     for (int i = 0; i < num_of_players; ++i) {
+        char p;
         string name;
         cout << "Enter Player Name: ";
         getline(cin, name);
         if (name.empty()) {
             name = "Player" + to_string(i + 1);
         }
-        players.emplace_back(new Player{name, 1500, 0, 0, false});
+        while(true) {
+            cout << "Enter What Piece You'd Like To Be: (Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
+            cin >> p;
+            bool duplicate = false;
+            for (auto it = players.begin(); it != players.end(); ++it) {
+                if((*it)->getPiece() == p) {
+                    duplicate = false;
+                    break;
+                }
+            }
+            if (duplicate) {
+                cout << "Someone has already chosen that piece, pick another :)" << endl;
+            }
+            else {
+                break;
+            }
+        }
+        players.emplace_back(new Player{name, p, 1500, 0, 0, false});
     }
 
     // Create a board of 40 squares.
@@ -119,9 +138,7 @@ int main() {
         } else if (cmd == "assets") {
             p->assets();
         } else if (cmd == "trade") {
-            PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
-            if (!ps) cout << "This square is not tradeable" << endl;
-            cout << "Trade command selected. (Not implemented yet.)\n";
+            cout << "If you chose the trade option please state your player name" << endl;
         } else if (cmd == "next") {
             // End current turn.
             command_loop = false;

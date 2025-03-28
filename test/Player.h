@@ -14,8 +14,7 @@ using namespace std;
 
 class Player {
 public:
-    // Updated constructor: now requires five arguments.
-    Player(const string &name, int money, int posn, int timsCup, bool inTimsLine);
+    Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine);
     ~Player();
 
     void roll();
@@ -25,8 +24,8 @@ public:
     int getTimsCupsVal() const;
     int getMoney() const;
     int getPosn() const;
-    // Added getName() so that callers can access the player's name.
     string getName() const;
+    char getPiece() const;
     void atTimsLineSwitch();
     void pay(int amount);
     void receive(int amount);
@@ -43,6 +42,7 @@ public:
 
 private:
     string name;
+    const char piece;
     int money;
     int posn;
     int timsCups;

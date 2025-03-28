@@ -6,8 +6,8 @@
 #include <algorithm>
 using namespace std;
 
-Player::Player(const string &name, int money, int posn, int timsCup, bool inTimsLine)
-    : name{name}, money(money), posn(posn), timsCups(timsCup), inTimsLine(inTimsLine) {}
+Player::Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine)
+    : name{name}, piece{piece}, money(money), posn(posn), timsCups(timsCup), inTimsLine(inTimsLine) {}
 
 Player::~Player() {
     buildingsOwned.clear();
@@ -48,6 +48,10 @@ int Player::getPosn() const {
 
 string Player::getName() const {
     return name;
+}
+
+char Player::getPiece() const {
+    return piece;
 }
 
 void Player::atTimsLineSwitch() { 
