@@ -1,5 +1,6 @@
 #include "Square.h"
 #include "PropertyData.h"
+#include "PurchasableSquare.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -37,12 +38,28 @@ vector<string> Square::print_square() const {
     const PropertyData* data = PropertyData::lookup(name);
     
     // Line 1: if property is improvable, mark it with an I; otherwise blank.
-    if (data && data->improvable)
-        oss << "|   I   |";
-    else
+    if (data && data->improvable) {
+        string improvablePart = "";
+        int improvements = 0;
+
+        // If this is a PurchasableSquare, get the improvement levels
+        if (auto purchasable = dynamic_cast<const PurchasableSquare*>(this)) {
+            improvements = purchasable->getImprovementLevels();
+        }
+
+        // Generate the "I" marks based on improvements
+        for (int i = 0; i < improvements; ++i) {
+            improvablePart += "I";
+        }
+
+        // Ensure the box is always 7 characters wide
+        oss << "| " << left << setw(5) << improvablePart << " |";
+    } else {
         oss << "|       |";
+    }
     output.push_back(oss.str());
-    oss.str(""); oss.clear();
+    oss.str(""); 
+    oss.clear();
 
     // Line 2: display a divider or the square name.
     if (data && data->improvable) {
