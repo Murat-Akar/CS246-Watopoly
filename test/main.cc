@@ -26,46 +26,50 @@ int main() {
     cout << "Enter the Number of Players (2 - 6): " << endl;
     int num_of_players = 0;
     while (true) {
-        
         if (!(cin >> num_of_players)) {
             cin.clear();
             cin.ignore();
             cout << "Invalid input. Please enter a number between 2 and 6: ";
             continue;
         }
-        if (num_of_players >= 2 && num_of_players <= 6)
+        if (num_of_players >= 2 && num_of_players <= 6) {
             break;
-        else
+        } else {
             cout << "Please enter a number between 2 and 6: ";
+        }
     }
     cin.ignore();
 
     for (int i = 0; i < num_of_players; ++i) {
-        char p;
         string name;
         cout << "Enter Player Name: ";
         getline(cin, name);
         if (name.empty()) {
             name = "Player" + to_string(i + 1);
         }
-        while(true) {
-            cout << "Enter What Piece You'd Like To Be: (Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
-            cin >> p;
+        
+        char piece;
+        while (true) {
+            cout << "Enter What Piece You'd Like To Be: "
+                 << "(Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), "
+                 << "Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
+            cin >> piece;
+            cin.ignore();
+            
             bool duplicate = false;
-            for (auto it = players.begin(); it != players.end(); ++it) {
-                if((*it)->getPiece() == p) {
-                    duplicate = false;
+            for (auto *pl : players) {
+                if (pl->getPiece() == piece) {
+                    duplicate = true;
                     break;
                 }
             }
             if (duplicate) {
                 cout << "Someone has already chosen that piece, pick another :)" << endl;
-            }
-            else {
+            } else {
                 break;
             }
         }
-        players.emplace_back(new Player{name, p, 1500, 0, 0, false});
+        players.emplace_back(new Player{name, piece, 1500, 0, 0, false});
     }
 
     // Create a board of 40 squares.
@@ -116,50 +120,160 @@ int main() {
     bool gameOver = false;
     int currentPlayerIndex = 0;
     while (!gameOver) {
-      bool command_loop = true;
-      while (command_loop) {
-        Player *p = players[currentPlayerIndex];
-        cout << "\n" << p->getName() << "'s turn. (roll/next/buy/assets/trade/quit): ";
-        string cmd;
-        cin >> cmd;
-        int pos = p->getPosn();
-        if (cmd == "roll") {
-            p->roll();
-            pos = p->getPosn();
-            cout << p->getName() << " landed on square " << pos << ".\n";
-            board[pos]->landOn(p);
-        } else if (cmd == "buy") {
-            PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
-            if (ps) {
-                ps->buy(p);
+        bool command_loop = true;
+        bool roll = true;
+        while (command_loop) {
+            Player *p = players[currentPlayerIndex];
+            cout << "\n" << p->getName() << "'s turn. (roll/next/buy/assets/trade/quit): ";
+            string cmd;
+            cin >> cmd;
+            int pos = p->getPosn();
+
+            if (cmd == "roll" && roll) {
+                roll = false;
+                p->roll();
+                pos = p->getPosn();
+                cout << p->getName() << " (" << p->getPiece() << ") landed on square "
+                     << pos << ".\n";
+                board[pos]->landOn(p);
+
+            } else if (cmd == "buy") {
+                PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
+                if (ps) {
+                    ps->buy(p);
+                } else {
+                    cout << "This square is not purchasable.\n";
+                }
+
+            } else if (cmd == "assets") {
+                p->assets();
+
+            } else if (cmd == "trade") {
+                cout << "Enter your name (the one offering the trade): ";
+                string traderName;
+                cin >> traderName;
+
+                cout << "Enter the name of the player you want to trade with: ";
+                string accepterName;
+                cin >> accepterName;
+
+                Player *p1_trader = nullptr;
+                Player *p2_accepter = nullptr;
+
+                // Find the two players
+                for (auto *pl : players) {
+                    if (pl->getName() == traderName) {
+                        p1_trader = pl;
+                    } else if (pl->getName() == accepterName) {
+                        p2_accepter = pl;
+                    }
+                }
+
+                if (!p1_trader || !p2_accepter) {
+                    cout << "Could not find one of those players. Trade aborted.\n";
+                    continue;
+                }
+
+                cout << "Select the type of trade:\n"
+                     << "  1) Money for Building\n"
+                     << "  2) Building for Building\n"
+                     << "  3) Building for Money\n"
+                     << "Enter choice: ";
+                int code;
+                cin >> code;
+
+                if (code == 1) {
+                    // Money for Building
+                    cout << "How much money is " << traderName << " offering? ";
+                    int amount;
+                    cin >> amount;
+
+                    cout << "Which building does " << accepterName << " own that you want to receive? ";
+                    string buildingName;
+                    cin >> buildingName;
+
+                    // Ask if accepterName accepts
+                    cout << accepterName << ", do you accept this trade? (1 = yes, 2 = no): ";
+                    int acceptCode;
+                    cin >> acceptCode;
+                    if (acceptCode == 1) {
+                        // money for building => p1_trader->trade(p2_accepter, amount, buildingName);
+                        p1_trader->trade(p2_accepter, amount, buildingName);
+                    } else {
+                        cout << accepterName << " did not accept the trade.\n";
+                    }
+
+                } else if (code == 2) {
+                    // Building for Building
+                    cout << "Enter the building name that " << traderName << " is offering: ";
+                    string buildingOffered;
+                    cin >> buildingOffered;
+
+                    cout << "Enter the building name that " << accepterName << " is offering: ";
+                    string buildingWanted;
+                    cin >> buildingWanted;
+
+                    cout << accepterName << ", do you accept this trade? (1 = yes, 2 = no): ";
+                    int acceptCode;
+                    cin >> acceptCode;
+                    if (acceptCode == 1) {
+                        // building for building => p1_trader->trade(p2_accepter, buildingOffered, buildingWanted);
+                        p1_trader->trade(p2_accepter, buildingOffered, buildingWanted);
+                    } else {
+                        cout << accepterName << " did not accept the trade.\n";
+                    }
+
+                } else if (code == 3) {
+                    // Building for Money
+                    cout << "Enter the building name that " << traderName << " wants to give: ";
+                    string buildingOffered;
+                    cin >> buildingOffered;
+
+                    cout << "How much money do you want from " << accepterName << " in return? ";
+                    int amount;
+                    cin >> amount;
+
+                    cout << accepterName << ", do you accept this trade? (1 = yes, 2 = no): ";
+                    int acceptCode;
+                    cin >> acceptCode;
+                    if (acceptCode == 1) {
+                        // building for money => p1_trader->trade(p2_accepter, buildingOffered, amount);
+                        p1_trader->trade(p2_accepter, buildingOffered, amount);
+                    } else {
+                        cout << accepterName << " did not accept the trade.\n";
+                    }
+
+                } else {
+                    cout << "Unknown trade type.\n";
+                }
+
+            } else if (cmd == "next") {
+                // End current turn.
+                command_loop = false;
+
+            } else if (cmd == "quit") {
+                command_loop = false;
+                gameOver = true;
+                cout << "Game Over!\n";
+                continue;
+
             } else {
-                cout << "This square is not purchasable. " << endl;
+                cout << "Unknown command." << endl;
             }
-        } else if (cmd == "assets") {
-            p->assets();
-        } else if (cmd == "trade") {
-            cout << "If you chose the trade option please state your player name" << endl;
-        } else if (cmd == "next") {
-            // End current turn.
-            command_loop = false;
-        } else if (cmd == "quit") {
-            command_loop = false;
-            gameOver = true;
-            cout << "Game Over!\n";
-            continue;
-        } else {
-            cout << "Unknown command." << endl;
+
+            cout << " " << setfill('_') << setw(98) << "_" << endl;
+            observer.notify();
         }
-        cout << " " << setfill('_') << setw(98) << "_" << endl;
-        observer.notify();
-      }
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
 
-    for (Square *s : board)
+    // Cleanup
+    for (Square *s : board) {
         delete s;
-    for (Player *p : players)
+    }
+    for (Player *p : players) {
         delete p;
+    }
 
     return 0;
 }

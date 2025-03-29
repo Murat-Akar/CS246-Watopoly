@@ -86,63 +86,68 @@ void Player::setPosition(int position) {
     posn = position;
 }
 
-void Player::trade(Player *other, int amount, const string &receiving) {
-    if(money >= amount) {
-        pay(amount);
-        other->receive(amount);
-        for(auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ) {
-            if((*it)->getName() == receiving) {
-                addBuilding(*it);
-                it = other->buildingsOwned.erase(it);
-                return;
-            } else {
-                ++it;
+    void Player::trade(Player *other, int amount, const string &receiving) {
+        if(money >= amount) {
+            pay(amount);
+            other->receive(amount);
+            for(auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ) {
+                if((*it)->getName() == receiving) {
+                    addBuilding(*it);
+                    it = other->buildingsOwned.erase(it);
+                    return;
+                } else {
+                    ++it;
+                }
             }
         }
+        cout << "Trade failed." << endl;
     }
-    cout << "Trade failed." << endl;
-}
 
-void Player::trade(Player *other, const string &trading, const string &receiving) {
-    auto itTrading = buildingsOwned.end();
-    for(auto it = buildingsOwned.begin(); it != buildingsOwned.end(); ++it) {
-        if((*it)->getName() == trading) {
-            itTrading = it;
-            break;
-        }
-    }
-    auto itReceiving = other->buildingsOwned.end();
-    for(auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ++it) {
-        if((*it)->getName() == receiving) {
-            itReceiving = it;
-            break;
-        }
-    }
-    if(itTrading != buildingsOwned.end() && itReceiving != other->buildingsOwned.end()) {
-        swap(*itTrading, *itReceiving);
-        cout << name << " traded " << trading << " for " << receiving 
-             << " with " << other->getName() << endl;
-        return;
-    }
-    cout << "Trade failed." << endl;
-}
-
-void Player::trade(Player *other, const string &receiving, int amount) {
-    if(money >= amount) {
-        pay(amount);
-        other->receive(amount);
-        for(auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ) {
-            if((*it)->getName() == receiving) {
-                addBuilding(*it);
-                it = other->buildingsOwned.erase(it);
-                return;
-            } else {
-                ++it;
+    void Player::trade(Player *other, const string &trading, const string &receiving) {
+        auto itTrading = buildingsOwned.end();
+        for(auto it = buildingsOwned.begin(); it != buildingsOwned.end(); ++it) {
+            if((*it)->getName() == trading) {
+                itTrading = it;
+                break;
             }
         }
+        auto itReceiving = other->buildingsOwned.end();
+        for(auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ++it) {
+            if((*it)->getName() == receiving) {
+                itReceiving = it;
+                break;
+            }
+        }
+        if(itTrading != buildingsOwned.end() && itReceiving != other->buildingsOwned.end()) {
+            swap(*itTrading, *itReceiving);
+            cout << name << " traded " << trading << " for " << receiving 
+                << " with " << other->getName() << endl;
+            return;
+        }
+        cout << "Trade failed." << endl;
     }
-    cout << "Trade failed." << endl;
-}
+
+    void Player::trade(Player *other, const string &receiving, int amount) {
+        // Check if the other player has enough money.
+        if(other->getMoney() >= amount) {
+            other->pay(amount);    // Other pays the amount.
+            receive(amount);       // Trader receives the amount.
+            // Look for the building in the trader's own properties.
+            for(auto it = buildingsOwned.begin(); it != buildingsOwned.end(); ) {
+                if((*it)->getName() == receiving) {
+                    // Transfer the building from trader to other.
+                    other->addBuilding(*it);
+                    it = buildingsOwned.erase(it);
+                    cout << name << " traded " << receiving << " for $" << amount 
+                         << " from " << other->getName() << endl;
+                    return;
+                } else {
+                    ++it;
+                }
+            }
+        }
+        cout << "Trade failed." << endl;
+    }
 
 // Observer pattern methods (currently no-op implementations)
 void Player::attach(Observer* o) { /* no-op */ }
