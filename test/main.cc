@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <iomanip>
 #include "Player.h"
 #include "Square.h"
@@ -15,21 +16,32 @@
 #include "PurchasableSquare.h"
 #include "Subject.h"
 #include "TextObserver.h"
+#include <unistd.h>					// getpid
+#include "PRNG.h"
 
 using namespace std;
 
 static int totalCups = 0;
 
+PRNG prng1, prng2, prng3;				// global, normally one generator for entire program
+extern PRNG prng1;					// declaration to use prng1 in another translation unit
+
 int main() {
+    // Randomizing with PRNG
+    uint32_t seed = getpid();				// start with a pseudo random-number
+    prng1.seed( seed );					// synchronize all generators with same seed
+    prng2.seed( seed );
+    prng3.seed( seed );
+
     // Create players.
     vector<Player*> players;
     cout << "Enter the Number of Players (2 - 6): " << endl;
     int num_of_players = 0;
+    string line;
     while (true) {
-        
-        if (!(cin >> num_of_players)) {
-            cin.clear();
-            cin.ignore();
+        getline(cin, line);
+        stringstream ss(line);
+        if (!(ss >> num_of_players) || !(ss >> std::ws).eof()) {
             cout << "Invalid input. Please enter a number between 2 and 6: ";
             continue;
         }
@@ -38,36 +50,49 @@ int main() {
         else
             cout << "Please enter a number between 2 and 6: ";
     }
-    cin.ignore();
 
     for (int i = 0; i < num_of_players; ++i) {
-        char p;
+        char piece;
         string name;
         cout << "Enter Player Name: ";
         getline(cin, name);
         if (name.empty()) {
             name = "Player" + to_string(i + 1);
         }
-        while(true) {
-            cout << "Enter What Piece You'd Like To Be: (Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
-            cin >> p;
+        while (true) {
+            cout << "Enter What Piece You'd Like To Be:" << endl;
+            cout << "(Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
+            string pieceStr;
+            getline(cin, pieceStr);
+            if (pieceStr.length() != 1) {
+                cout << "Invalid piece. Please enter one of the allowed letters." << endl;
+                continue;
+            }
+            piece = pieceStr[0];
+            if (piece != 'G' && piece != 'g' && piece != 'B' && piece != 'b' &&
+                piece != 'D' && piece != 'd' && piece != 'P' && piece != 'p' &&
+                piece != 'S' && piece != 's' && piece != 'M' && piece != 'm' &&
+                piece != 'L' && piece != 'l' && piece != 'T' && piece != 't') {
+                cout << "Invalid piece. Please enter one of the allowed letters." << endl;
+                continue;
+            }
+            piece = toupper(piece);
             bool duplicate = false;
             for (auto it = players.begin(); it != players.end(); ++it) {
-                if((*it)->getPiece() == p) {
-                    duplicate = false;
+                if (toupper((*it)->getPiece()) == piece) {
+                    duplicate = true;
                     break;
                 }
             }
             if (duplicate) {
                 cout << "Someone has already chosen that piece, pick another :)" << endl;
+                continue;
             }
-            else {
-                break;
-            }
+            break;
         }
-        players.emplace_back(new Player{name, p, 1500, 0, 0, false});
+        players.emplace_back(new Player{name, piece, 1500, 0, 0, false});
     }
-
+    
     // Create a board of 40 squares.
     vector<Square*> board(40, nullptr);
     board[0]  = new CollectOSAPSquare(0, 200);
@@ -117,6 +142,7 @@ int main() {
     int currentPlayerIndex = 0;
     while (!gameOver) {
       bool command_loop = true;
+      bool canRoll = true;
       while (command_loop) {
         Player *p = players[currentPlayerIndex];
         cout << "\n" << p->getName() << "'s turn. (roll/next/buy/assets/trade/quit): ";
@@ -124,10 +150,19 @@ int main() {
         cin >> cmd;
         int pos = p->getPosn();
         if (cmd == "roll") {
-            p->roll();
-            pos = p->getPosn();
-            cout << p->getName() << " landed on square " << pos << ".\n";
-            board[pos]->landOn(p);
+            if (!canRoll) {
+                cout << "You have already rolled this turn. Please choose another command." << endl;
+            } else {
+                bool doubles = p->roll();
+                pos = p->getPosn();
+                cout << p->getName() << " landed on square " << pos << ".\n";
+                board[pos]->landOn(p);
+                if (!doubles) {
+                    canRoll = false;
+                } else {
+                    cout << "Doubles rolled! You may now roll again." << endl;
+                }
+            }
         } else if (cmd == "buy") {
             PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
             if (ps) {
