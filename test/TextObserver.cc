@@ -24,7 +24,8 @@ void TextObserver::notify() {
     // Print top row (squares 20 to 30)
     for (int line = 0; line < linesPerSquare; ++line) {
         for (int i = 20; i <= 30; ++i) {
-            cout << squares[i]->print_square()[line];
+            vector<string> squareLines = squares[i]->print_square(players);
+            cout << squareLines[line];
         }
         cout << '\n';
     }
@@ -32,8 +33,11 @@ void TextObserver::notify() {
     for (int row = 0; row < 9; ++row) {
         int leftIdx = 19 - row;
         int rightIdx = 31 + row;
-        auto leftLines = squares[leftIdx]->print_square();
-        auto rightLines = squares[rightIdx]->print_square();
+
+        vector<string> leftLines = squares[leftIdx]->print_square(players);
+        vector<string> rightLines = squares[rightIdx]->print_square(players);
+
+        // Print each line for left and right columns
         for (int line = 0; line < linesPerSquare; ++line) {
             cout << leftLines[line];
             if (line == linesPerSquare - 1 && row == 8) {
@@ -43,11 +47,15 @@ void TextObserver::notify() {
             }
             cout << rightLines[line] << '\n';
         }
+
     }
+    
     // Print bottom row (squares 10 to 0, right-to-left)
     for (int line = 0; line < linesPerSquare; ++line) {
         for (int i = 10; i >= 0; --i) {
-            cout << squares[i]->print_square()[line];
+            // Print the 4th line with player initials if a player is on that square
+            vector<string> squareLines = squares[i]->print_square(players);  // Pass players to print_square
+            cout << squareLines[line];
         }
         cout << '\n';
     }
