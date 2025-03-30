@@ -4,16 +4,18 @@
 #include "PurchasableSquare.h"
 #include "ActionSquare.h"
 #include <random>
+#include "PRNG.h"
+
+extern int totalCups; // Using to keep track of total cups across all players
 
 SLCSquare::SLCSquare(int posn)
     : ActionSquare("SLC", posn) {
 }
 
 void SLCSquare::applyAction(Player *p) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(1, 24);
-    int roll = dist(gen);
+    static PRNG prng; 
+
+    int roll = prng(1, 24);
 
     if (roll <= 3) { 
         cout << p->getName() << " moves back 3.\n";
@@ -35,19 +37,55 @@ void SLCSquare::applyAction(Player *p) {
         p->move(3);
     } else if (roll == 23) {
         cout << p->getName() << " is sent to DC Tims Line!\n";
-        p->setPosition(10);
+        p->setPosition(10);  
     } else {
         cout << p->getName() << " advances to Collect OSAP.\n";
-        p->setPosition(0);
+        p->setPosition(0); 
     }
-    // int new_posn = p->getPosn();
-    // const PropertyData *pd = PropertyData::find_idx(new_posn);
-    // if (pd) {
-    //     if(pd->improvable) {
-    //         PurchasableSquare *p = new PurchasableSquare{"",new_posn, pd->purchase_cost, true, pd->monopolyblockID, }
-    //     }
-    //     else {
-    //         ActionSqaure *a = new ActionSquare{}
-    //     }
-    // }
+    const auto &data = PropertyData::getAcademicData();
+    string realName;
+    const PropertyData *pd_ptr = nullptr;
+    int count = 0;
+    for (const auto &entry : data) {
+        if (count == new_posn) {
+            realName = entry.first;
+            pd_ptr = &entry.second;
+            break;
+        }
+        count++;
+    }
+    
+
+    if (totalCups < 4 && prng(1, 100) <= 1) { 
+        cout << p->getName() << " receives a Roll Up the Rim cup!\n";
+        p->receivedCup();
+        totalCups++;  
+    }
+
+    if (pd_ptr) {
+        const PropertyData &pd = *pd_ptr;
+        if (pd.improvable) {
+            PurchasableSquare *tempSquare = new PurchasableSquare(
+                realName,
+                new_posn,
+                pd.purchase_cost,
+                true,
+                pd.monopolyblockID,
+                0,        // initial improvement level
+                nullptr,  // no owner initially
+                false     // not mortgaged
+            );
+            cout << "Created PurchasableSquare: " << tempSquare->getName() << endl;
+            tempSquare->landOn(p);
+            delete tempSquare;
+        } else {
+            // Create an ActionSquare using its constructor.
+            ActionSquare *tempSquare = new ActionSquare(realName, new_posn);
+            cout << "Created ActionSquare: " << tempSquare->getName() << endl;
+            tempSquare->landOn(p);
+            delete tempSquare;
+        }
+    } else {
+        cout << "No property data found for board index " << new_posn << ".\n";
+    }
 }
