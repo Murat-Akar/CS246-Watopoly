@@ -108,7 +108,7 @@ int main() {
     board[11] = new PurchasableSquare("RCH", 11, 140, true, "Eng", 0, nullptr, false);
     board[12] = new PurchasableSquare("PAC", 12, 150, true, "NONE", 0, nullptr, false);
     board[13] = new PurchasableSquare("DWE", 13, 140, true, "Eng", 0, nullptr, false);
-    board[14] = new PurchasableSquare("CPH", 14, 150, true, "NONE", 0, nullptr, false);
+    board[14] = new PurchasableSquare("CPH", 14, 150, true, "ENG", 0, nullptr, false);
     board[15] = new PurchasableSquare("UWP", 15, 200, true, "NONE", 0, nullptr, false);
     board[16] = new PurchasableSquare("LHI", 16, 180, true, "Health", 0, nullptr, false);
     board[17] = new SLCSquare(17);
@@ -120,10 +120,10 @@ int main() {
     board[23] = new PurchasableSquare("EV2", 23, 220, true, "Env", 0, nullptr, false);
     board[24] = new PurchasableSquare("EV3", 24, 220, true, "Env", 0, nullptr, false);
     board[25] = new PurchasableSquare("V1", 25, 200, true, "NONE", 0, nullptr, false);
-    board[26]  = new PurchasableSquare("PHYS", 26, 120, true, "Arts1", 0, nullptr, false);
-    board[27]  = new PurchasableSquare("B1", 27, 100, true, "Arts1", 0, nullptr, false);
+    board[26]  = new PurchasableSquare("PHYS", 26, 120, true, "Sci1", 0, nullptr, false);
+    board[27]  = new PurchasableSquare("B1", 27, 100, true, "Sci1", 0, nullptr, false);
     board[28] = new PurchasableSquare("CIF", 28, 150, true, "NONE", 0, nullptr, false);
-    board[29]  = new PurchasableSquare("B2", 29, 100, true, "Arts1", 0, nullptr, false);
+    board[29]  = new PurchasableSquare("B2", 29, 100, true, "Sci1", 0, nullptr, false);
     board[30] = new GoToTimsSquare(30);
     board[31] = new PurchasableSquare("EIT", 31, 300, true, "Sci2", 0, nullptr, false);
     board[32] = new PurchasableSquare("ESC", 32, 300, true, "Sci2", 0, nullptr, false);
