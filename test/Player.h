@@ -14,10 +14,12 @@ using namespace std;
 
 class Player {
 public:
+    vector<Square*> buildingsOwned;
     Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine);
     ~Player();
 
     bool roll();
+    bool roll_testing(int die1, int die2);
     void move(int steps);
     void addBuilding(Square *s);
     void receivedCup();
@@ -47,7 +49,6 @@ private:
     int posn;
     int timsCups;
     bool inTimsLine;
-    vector<Square*> buildingsOwned;
 };
 
 #endif // PLAYER_H

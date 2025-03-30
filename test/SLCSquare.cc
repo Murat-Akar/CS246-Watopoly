@@ -1,5 +1,8 @@
 #include "SLCSquare.h"
 #include "Player.h"
+#include "PropertyData.h"
+#include "PurchasableSquare.h"
+#include "ActionSquare.h"
 #include <random>
 
 SLCSquare::SLCSquare(int posn)
@@ -37,4 +40,14 @@ void SLCSquare::applyAction(Player *p) {
         cout << p->getName() << " advances to Collect OSAP.\n";
         p->setPosition(0);
     }
+    // int new_posn = p->getPosn();
+    // const PropertyData *pd = PropertyData::find_idx(new_posn);
+    // if (pd) {
+    //     if(pd->improvable) {
+    //         PurchasableSquare *p = new PurchasableSquare{"",new_posn, pd->purchase_cost, true, pd->monopolyblockID, }
+    //     }
+    //     else {
+    //         ActionSqaure *a = new ActionSquare{}
+    //     }
+    // }
 }

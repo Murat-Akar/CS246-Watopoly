@@ -20,9 +20,11 @@ public:
                       const string &monopolyblockId, int improvementLevels,
                       Player *owner = nullptr, bool mortgaged = false);
     void buy(Player *p);
-    bool isMonopoly(Player *p); // You can implement logic here.
+    bool isMonopoly(); 
     void mortgage();
     void unmortgage();
+    void inc_improvementLevel(Player *p);
+    void dec_improvementLevel(Player *p);
     virtual bool landOn(Player *p) override;
     
     // For use in isMonopoly checking.

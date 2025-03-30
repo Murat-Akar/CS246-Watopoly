@@ -46,7 +46,7 @@ bool PurchasableSquare::landOn(Player *p) {
             }
             int rent = 0;
             // Suppose if no improvements and not a monopoly, rent doubles.
-            if (improvementLevels == 0 && !isMonopoly(p))
+            if (improvementLevels == 0 && !isMonopoly())
                 rent = pd->rentTable[0] * 2;
             else
                 rent = pd->rentTable[improvementLevels];
@@ -63,10 +63,27 @@ bool PurchasableSquare::landOn(Player *p) {
     }
 }
 
-bool PurchasableSquare::isMonopoly(Player *p) {
-    // Stub: return false or implement your own logic.
-    return false;
+bool PurchasableSquare::isMonopoly() {
+    int monopoly_amount = 0, owner_amount = 0;
+    string square_tag = getMonopolyBlock();
+    if (square_tag == "NONE" || square_tag == "GYM" || square_tag == "RESIDENCE") {
+        return false;
+    }
+    const auto &pd = PropertyData::getAcademicData(); 
+    for (auto it = pd.begin(); it != pd.end(); ++it) {
+        if (it->second.monopolyblockID == square_tag) {
+            ++monopoly_amount;
+        }
+    }
+    for (auto it = owner->buildingsOwned.begin(); it != owner->buildingsOwned.end(); ++it) {
+        PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(*it);
+        if (ps && ps->getMonopolyBlock() == square_tag) {
+            ++owner_amount;
+        }
+    }
+    return (owner_amount == monopoly_amount && monopoly_amount > 0);
 }
+
 
 void PurchasableSquare::mortgage() {
     if (improvementLevels > 0) {
@@ -97,5 +114,33 @@ void PurchasableSquare::unmortgage() {
         }
     } else {
         cout << getName() << " is not mortgaged." << endl;
+    }
+}
+
+void PurchasableSquare::inc_improvementLevel(Player *p) {
+    if ((monopolyblockId != "NONE" && monopolyblockId != "GYM" && monopolyblockId != "RESIDENCE") 
+        && improvementLevels < 5 && isMonopoly()) {
+        if (p == owner) {
+            improvementLevels++;
+            cout << getName() << " now has improvement level " << improvementLevels << ".\n";
+        } else {
+            cout << "You are not the owner of this square." << endl;
+        }
+    } else {
+        cout << "Not an improvable square or max improvement level reached." << endl;
+    }
+}
+
+void PurchasableSquare::dec_improvementLevel(Player *p) {
+    if ((monopolyblockId != "NONE" && monopolyblockId != "GYM" && monopolyblockId != "RESIDENCE") 
+        && improvementLevels > 0 && isMonopoly()) {
+        if (p == owner) {
+            improvementLevels--;
+            cout << getName() << " now has improvement level " << improvementLevels << ".\n";
+        } else {
+            cout << "You are not the owner of this square." << endl;
+        }
+    } else {
+        cout << "Not an improvable square or minimum improvement level reached." << endl;
     }
 }

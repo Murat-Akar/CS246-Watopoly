@@ -15,6 +15,11 @@ Player::~Player() {
     buildingsOwned.clear();
 }
 
+bool Player::roll_testing(int die1, int die2) {
+    posn = (posn + (die1 + die2)) % 40;
+    return true;
+}
+
 bool Player::roll() { 
     int  die1 = prng1(1,6); 
     int  die2 = prng1(1,6);

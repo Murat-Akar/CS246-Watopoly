@@ -88,7 +88,6 @@ int main() {
                 break;
             }
         }
-        // Only add one player per iteration.
         players.emplace_back(new Player{name, piece, 1500, 0, 0, false});
     }
 
@@ -144,7 +143,8 @@ int main() {
         bool canRoll = true;
         while (command_loop) {
             Player *p = players[currentPlayerIndex];
-            cout << "\n" << p->getName() << "'s turn. (roll/next/buy/assets/trade/mortgage/unmortgage/quit): ";
+            cout << "\nAnyone can choose to (trade/mortgage/unmortgage) at anytime if resources allow. " << endl;
+            cout << p->getName() << "'s turn. (roll/next/buy/assets/improvements/quit): ";
             string cmd;
             cin >> cmd;
             int pos = p->getPosn();
@@ -152,10 +152,18 @@ int main() {
                 if (!canRoll) {
                     cout << "You have already rolled this turn. Please choose another command." << endl;
                 } else {
-                    // roll returns a bool indicating if doubles were rolled (if implemented)
-                    bool doubles = p->roll();
+                    //TESTING HARNESS FOR ROLL
+                    int d1,d2;
+                    cout << "Enter Value Of First Die:";
+                    cin >> d1;
+                    cout << "\nEnter Value Of Second Die:" << endl;
+                    cin >> d2;
+                    bool doubles = p->roll_testing(d1,d2);
+                    // END OF TESTING HARNESS FOR ROLL
+                    
+                    // bool doubles = p->roll();
                     pos = p->getPosn();
-                    cout << p->getName() << " (" << p->getPiece() << ") landed on " 
+                    cout << p->getName() << " (" << p->getPiece() << ") landed on square " 
                          << board[pos]->getName() << ".\n";
                     board[pos]->landOn(p);
                     if (!doubles) {
@@ -247,8 +255,7 @@ int main() {
                 } else {
                     cout << "Unknown trade type." << endl;
                 }
-            }
-            else if (cmd == "mortgage") {
+            } else if (cmd == "mortgage") {
                 string piece, building;
                 Player *mortgaging_player = nullptr;
                 cout << "Enter the piece of the player mortgaging: ";
@@ -262,6 +269,7 @@ int main() {
                     }
                 }
                 if (mortgaging_player) {
+                    // Uncomment and implement mortgage logic here:
                     // mortgaging_player->mortgage(building);
                 }
             } else if (cmd == "unmortgage") {
@@ -278,7 +286,31 @@ int main() {
                     }
                 }
                 if (unmortgaging_player) {
+                    // Uncomment and implement unmortgage logic here:
                     // unmortgaging_player->unmortgage(building);
+                }
+            } else if (cmd == "improvements") {
+                PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
+                if (ps) {
+                    while (true) {
+                        cout << "Select the Type Of Improvement You Would Like:\n"
+                             << "1) Add Improvement\n"
+                             << "2) Remove Improvement\n"
+                             << "Enter Choice: ";
+                        int code;
+                        cin >> code;
+                        if (code == 1) {
+                            ps->inc_improvementLevel(p);
+                            break;
+                        } else if (code == 2) {
+                            ps->dec_improvementLevel(p);
+                            break;
+                        } else {
+                            cout << "Invalid Option, Please Choose Again!" << endl;
+                        }
+                    }
+                } else {
+                    cout << "This is not an improvable square" << endl;
                 }
             } else if (cmd == "next") {
                 command_loop = false;
