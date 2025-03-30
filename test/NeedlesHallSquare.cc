@@ -5,7 +5,7 @@
 using namespace std;
 
 NeedlesHallSquare::NeedlesHallSquare(int posn)
-    : ActionSquare("Needles Hall", posn) {
+    : ActionSquare("NEEDLES HALL", posn) {
 }
 
 void NeedlesHallSquare::applyAction(Player *p) {

@@ -2,7 +2,7 @@
 #include "Player.h"
 
 TuitionSquare::TuitionSquare(int posn, int tuitionAmount)
-    : ActionSquare("Tuition", posn), tuitionAmount(tuitionAmount) {
+    : ActionSquare("TUITION", posn), tuitionAmount(tuitionAmount) {
 }
 
 void TuitionSquare::applyAction(Player *p) {

@@ -38,21 +38,46 @@ vector<string> Square::print_square(const vector<Player*>& players) const {
     const PropertyData* data = PropertyData::lookup(name);
     
     // Line 1: if property is improvable, mark it with an I; otherwise blank.
-    if (data && data->improvable) {
+     if (name == "COLLECT OSAP") {
+        oss << "|COLLECT|";
+    } else if (name == "SLC") {
+        oss << "|SLC    |";
+    } else if (name == "TUITION") {
+        oss << "|TUITION|";
+    } else if (name == "MKV") {
+        oss << "|MKV    |";
+    } else if (name == "NEEDLES HALL") {
+        oss << "|NEEDLES|";
+    } else if (name == "DC Tims Line") {
+        oss << "|DC Tims|";
+    } else if (name == "PAC") {
+        oss << "|PAC    |";
+    } else if (name == "UWP") {
+        oss << "|UWP    |";
+    } else if (name == "Goose Nesting") {
+        oss << "|Goose  |";
+    } else if (name == "V1") {
+        oss << "|V1     |";
+    } else if (name == "CIF") {
+        oss << "|CIF    |";
+    } else if (name == "GO TO TIMS") {
+        oss << "|GO TO  |";
+    } else if (name == "REV") {
+        oss << "|REV    |";
+    } else if (name == "COOP FEE") {
+        oss << "|COOP   |";
+    } else if (data && data->improvable) {
         string improvablePart = "";
         int improvements = 0;
 
-        // If this is a PurchasableSquare, get the improvement levels
         if (auto purchasable = dynamic_cast<const PurchasableSquare*>(this)) {
             improvements = purchasable->getImprovementLevels();
         }
 
-        // Generate the "I" marks based on improvements
         for (int i = 0; i < improvements; ++i) {
             improvablePart += "I";
         }
 
-        // Ensure the box is always 7 characters wide
         oss << "| " << left << setw(5) << improvablePart << " |";
     } else {
         oss << "|       |";
@@ -62,13 +87,32 @@ vector<string> Square::print_square(const vector<Player*>& players) const {
     oss.clear();
 
     // Line 2: display a divider or the square name.
-    if (data && data->improvable) {
+    if (name == "COLLECT OSAP") {
+        oss << "|OSAP   |";
+        output.push_back(oss.str());
+    } else if (name == "NEEDLES HALL") {
+        oss << "|HALL   |";
+        output.push_back(oss.str());
+    } else if (name == "DC Tims Line") {
+        oss << "|Line   |";
+        output.push_back(oss.str());
+    } else if (name == "Goose Nesting") {
+        oss << "|Nesting|";
+        output.push_back(oss.str());
+    } else if (name == "GO TO TIMS") {
+        oss << "|TIMS   |";
+        output.push_back(oss.str());
+    } else if (name == "COOP FEE") {
+        oss << "|FEE    |";
+        output.push_back(oss.str());
+    } else if (data && data->improvable) {
         output.push_back("|-------|");
     } else {
-        oss << "|" << left << setw(7) << name.substr(0, 7) << "|";
+        oss << "|       |";
         output.push_back(oss.str());
     }
-    oss.str(""); oss.clear();
+    oss.str(""); 
+    oss.clear();
 
     // Line 3: if improvable, show name; otherwise blank.
     if (data && data->improvable)
