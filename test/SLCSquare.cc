@@ -3,10 +3,18 @@
 #include "PropertyData.h"
 #include "PurchasableSquare.h"
 #include "ActionSquare.h"
-#include <random>
 #include "PRNG.h"
+#include "CoopFeeSquare.h"
+#include "NeedlesHallSquare.h"
+#include "TuitionSquare.h"
+#include "GooseNestingSquare.h"
+#include "GoToTimsSquare.h"
+#include "TimsLineSquare.h"
+#include <random>
+#include <iostream>
+using namespace std;
 
-extern int totalCups; // Using to keep track of total cups across all players
+extern int totalCups; // Global variable for total cups
 
 SLCSquare::SLCSquare(int posn)
     : ActionSquare("SLC", posn) {
@@ -14,7 +22,6 @@ SLCSquare::SLCSquare(int posn)
 
 void SLCSquare::applyAction(Player *p) {
     static PRNG prng; 
-
     int roll = prng(1, 24);
 
     if (roll <= 3) { 
@@ -42,29 +49,35 @@ void SLCSquare::applyAction(Player *p) {
         cout << p->getName() << " advances to Collect OSAP.\n";
         p->setPosition(0); 
     }
-    const auto &data = PropertyData::getAcademicData();
-    string realName;
-    const PropertyData *pd_ptr = nullptr;
-    int count = 0;
-    for (const auto &entry : data) {
-        if (count == new_posn) {
-            realName = entry.first;
-            pd_ptr = &entry.second;
-            break;
-        }
-        count++;
-    }
-    
 
+    
     if (totalCups < 4 && prng(1, 100) <= 1) { 
         cout << p->getName() << " receives a Roll Up the Rim cup!\n";
         p->receivedCup();
         totalCups++;  
     }
 
+    // Use the player's updated position.
+    int new_posn = p->getPosn();
+
+    // Manually iterate over the property data map to find the entry for board index new_posn.
+    const auto &data = PropertyData::getAcademicData();
+    string realName;
+    const PropertyData *pd_ptr = nullptr;
+    int count = new_posn;
+    
+    for(auto it = data.begin(); it != data.end(); ++it, --count) {
+        if(count == 1) {
+            realName = (*it).first;
+            pd_ptr = &it->second;
+            break;
+        }
+    }
+    
     if (pd_ptr) {
         const PropertyData &pd = *pd_ptr;
         if (pd.improvable) {
+            // Create a new PurchasableSquare using the real property name and data.
             PurchasableSquare *tempSquare = new PurchasableSquare(
                 realName,
                 new_posn,
@@ -79,11 +92,53 @@ void SLCSquare::applyAction(Player *p) {
             tempSquare->landOn(p);
             delete tempSquare;
         } else {
-            // Create an ActionSquare using its constructor.
-            ActionSquare *tempSquare = new ActionSquare(realName, new_posn);
-            cout << "Created ActionSquare: " << tempSquare->getName() << endl;
-            tempSquare->landOn(p);
-            delete tempSquare;
+            // For non-improvable properties, choose the correct square based on its real name.
+            if (realName == "COOP FEE") {
+                CoopFeeSquare *tempSquare = new CoopFeeSquare(new_posn, 150);
+                cout << "Created CoopFeeSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else if (realName == "NEEDLES HALL") {
+                NeedlesHallSquare *tempSquare = new NeedlesHallSquare(new_posn);
+                cout << "Created NeedlesHallSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else if (realName == "TUITION") {
+                TuitionSquare *tempSquare = new TuitionSquare(new_posn, 300);
+                cout << "Created TuitionSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else if (realName == "GOOSE NESTING") {
+                GooseNestingSquare *tempSquare = new GooseNestingSquare(new_posn);
+                cout << "Created GooseNestingSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else if (realName == "GO TO TIMS") {
+                GoToTimsSquare *tempSquare = new GoToTimsSquare(new_posn);
+                cout << "Created GoToTimsSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else if (realName == "SLC") {
+                // If it happens to be SLC again, re-instantiate an SLCSquare.
+                SLCSquare *tempSquare = new SLCSquare(new_posn);
+                cout << "Created SLCSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else if (realName == "DC TIMS LINE") {
+                TimsLineSquare *tempSquare = new TimsLineSquare(new_posn, 0);
+                cout << "Created TimsLineSquare: " << tempSquare->getName() << endl;
+                tempSquare->landOn(p);
+                delete tempSquare;
+            }
+            else {
+                cout << "Unknown non-improvable square type: " << realName << ". No action taken.\n";
+            }
         }
     } else {
         cout << "No property data found for board index " << new_posn << ".\n";
