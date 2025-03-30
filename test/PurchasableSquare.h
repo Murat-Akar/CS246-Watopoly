@@ -27,6 +27,7 @@ public:
     
     // For use in isMonopoly checking.
     string getMonopolyBlock() const { return monopolyblockId; }
+    int getImprovementLevels() const { return improvementLevels; }
 };
 
 #endif // PURCHASABLE_SQUARE_H

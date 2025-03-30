@@ -28,7 +28,7 @@ public:
     bool isPurchasable() const;
 
     // Returns a simple ASCII box (for display) as a vector of strings.
-    virtual vector<string> print_square() const;
+    virtual vector<string> print_square(const vector<Player*>& players) const;
 };
 
 #endif // SQUARE_H
