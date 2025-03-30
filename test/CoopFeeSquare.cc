@@ -5,7 +5,7 @@
 using namespace std;
 
 CoopFeeSquare::CoopFeeSquare(int posn, int fee)
-    : ActionSquare("Co-op Fee", posn), fee(fee) {
+    : ActionSquare("COOP FEE", posn), fee(fee) {
 }
 
 void CoopFeeSquare::applyAction(Player *p) {

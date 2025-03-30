@@ -8,7 +8,7 @@ extern int totalCups; // Keeping track of total cups across all players
 
 
 NeedlesHallSquare::NeedlesHallSquare(int posn)
-    : ActionSquare("Needles Hall", posn) {
+    : ActionSquare("NEEDLES HALL", posn) {
 }
 
 void NeedlesHallSquare::applyAction(Player *p) {
