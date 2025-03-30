@@ -10,7 +10,6 @@
 #include "GooseNestingSquare.h"
 #include "GoToTimsSquare.h"
 #include "TimsLineSquare.h"
-#include <random>
 #include <iostream>
 using namespace std;
 
@@ -62,16 +61,15 @@ void SLCSquare::applyAction(Player *p) {
 
     // Manually iterate over the property data map to find the entry for board index new_posn.
     const auto &data = PropertyData::getAcademicData();
+
     string realName;
     const PropertyData *pd_ptr = nullptr;
-    int count = new_posn;
     
-    for(auto it = data.begin(); it != data.end(); ++it, --count) {
-        if(count == 1) {
+    for(auto it = data.begin(); it != data.end(); ++it) {
+       if ((*it).second.posn == new_posn) {
             realName = (*it).first;
             pd_ptr = &it->second;
-            break;
-        }
+       }
     }
     
     if (pd_ptr) {

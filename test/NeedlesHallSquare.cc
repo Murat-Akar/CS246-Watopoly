@@ -2,6 +2,7 @@
 #include "Player.h"
 #include <iostream>
 #include "PRNG.h"
+
 using namespace std;
 
 extern int totalCups; // Keeping track of total cups across all players
@@ -48,4 +49,5 @@ void NeedlesHallSquare::applyAction(Player *p) {
         p->receivedCup(); 
         totalCups++; 
     }
+    
 }

@@ -9,6 +9,7 @@ using namespace std;
 struct PropertyData {
     string monopolyblockID;
     bool improvable;
+    int posn;
     int purchase_cost;
     int improvement_cost;
     vector<int> rentTable;
