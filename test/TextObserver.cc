@@ -35,7 +35,13 @@ void TextObserver::notify() {
         auto leftLines = squares[leftIdx]->print_square();
         auto rightLines = squares[rightIdx]->print_square();
         for (int line = 0; line < linesPerSquare; ++line) {
-            cout << leftLines[line] << string(63, ' ') << rightLines[line] << '\n';
+            cout << leftLines[line];
+            if (line == linesPerSquare - 1 && row == 8) {
+                cout << string(81, '_');
+            } else {
+                cout << string(81, ' ');
+            }
+            cout << rightLines[line] << '\n';
         }
     }
     // Print bottom row (squares 10 to 0, right-to-left)

@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "Observer.h"  // For Observer definition; ensure observer.h exists in your project.
 #include "Square.h"    // Ensure this file exists with the full Square definition.
-// #include "PRNG.h"      // For prng function.
+#include "PRNG.h"      // For prng function.
 
 using namespace std;
 
@@ -17,7 +17,7 @@ public:
     Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine);
     ~Player();
 
-    void roll();
+    bool roll();
     void move(int steps);
     void addBuilding(Square *s);
     void receivedCup();

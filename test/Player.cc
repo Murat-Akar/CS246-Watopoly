@@ -1,10 +1,12 @@
 #include "Player.h"
-// #include "PRNG.h"
 #include "Observer.h"
 #include "Square.h"
 #include <iostream>
 #include <algorithm>
+#include "PRNG.h"
 using namespace std;
+
+extern PRNG prng1;
 
 Player::Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine)
     : name{name}, piece{piece}, money(money), posn(posn), timsCups(timsCup), inTimsLine(inTimsLine) {}
@@ -13,12 +15,13 @@ Player::~Player() {
     buildingsOwned.clear();
 }
 
-void Player::roll() {
-    int die1 = 2;
-    int die2 = 3;
+bool Player::roll() { 
+    int  die1 = prng1(1,6); 
+    int  die2 = prng1(1,6);
     int steps = die1 + die2;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
     move(steps);
+    return (die1 == die2);
 }
 
 void Player::move(int steps) {
@@ -152,3 +155,4 @@ void Player::setPosition(int position) {
 // Observer pattern methods (currently no-op implementations)
 void Player::attach(Observer* o) { /* no-op */ }
 void Player::detach(Observer* o) { /* no-op */ }
+
