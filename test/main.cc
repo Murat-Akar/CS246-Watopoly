@@ -58,73 +58,73 @@ int main(int argc, char* argv[])
     vector<Player *> players;
     if (loadingMode == false) {
         cout << "Enter the Number of Players (2 - 6): " << endl;
-    int num_of_players = 0;
-    string line;
-    while (true)
-    {
-        getline(cin, line);
-        stringstream ss(line);
-        if (!(ss >> num_of_players) || !(ss >> ws).eof())
-        {
-            cout << "Invalid input. Please enter a number between 2 and 6: ";
-            continue;
-        }
-        if (num_of_players >= 2 && num_of_players <= 6)
-            break;
-        else
-            cout << "Please enter a number between 2 and 6: ";
-    }
-
-    for (int i = 0; i < num_of_players; ++i)
-    {
-        string name;
-        cout << "Enter Player Name: ";
-        getline(cin, name);
-        if (name.empty())
-        {
-            name = "Player" + to_string(i + 1);
-        }
-
-        char piece;
+        int num_of_players = 0;
+        string line;
         while (true)
         {
-            cout << "Enter What Piece You'd Like To Be:" << endl;
-            cout << "(Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
-            string pieceStr;
-            getline(cin, pieceStr);
-            if (pieceStr.length() != 1)
+            getline(cin, line);
+            stringstream ss(line);
+            if (!(ss >> num_of_players) || !(ss >> ws).eof())
             {
-                cout << "Invalid piece. Please enter one of the allowed letters." << endl;
+                cout << "Invalid input. Please enter a number between 2 and 6: ";
                 continue;
             }
-            piece = toupper(pieceStr[0]);
-            if (piece != 'G' && piece != 'B' && piece != 'D' && piece != 'P' &&
-                piece != 'S' && piece != 'M' && piece != 'L' && piece != 'T')
+            if (num_of_players >= 2 && num_of_players <= 6)
+                break;
+            else
+                cout << "Please enter a number between 2 and 6: ";
+        }
+
+        for (int i = 0; i < num_of_players; ++i)
+        {
+            string name;
+            cout << "Enter Player Name: ";
+            getline(cin, name);
+            if (name.empty())
             {
-                cout << "Invalid piece. Please enter one of the allowed letters." << endl;
-                continue;
+                name = "Player" + to_string(i + 1);
             }
-            bool duplicate = false;
-            for (auto *pl : players)
+
+            char piece;
+            while (true)
             {
-                if (toupper(pl->getPiece()) == piece)
+                cout << "Enter What Piece You'd Like To Be:" << endl;
+                cout << "(Goose(G), GRT BUS(B), Tim Hortons Doughnut(D), Professor(P), Student(S), Money(M), Laptop(L), Pink Tie(T)):" << endl;
+                string pieceStr;
+                getline(cin, pieceStr);
+                if (pieceStr.length() != 1)
                 {
-                    duplicate = true;
+                    cout << "Invalid piece. Please enter one of the allowed letters." << endl;
+                    continue;
+                }
+                piece = toupper(pieceStr[0]);
+                if (piece != 'G' && piece != 'B' && piece != 'D' && piece != 'P' &&
+                    piece != 'S' && piece != 'M' && piece != 'L' && piece != 'T')
+                {
+                    cout << "Invalid piece. Please enter one of the allowed letters." << endl;
+                    continue;
+                }
+                bool duplicate = false;
+                for (auto *pl : players)
+                {
+                    if (toupper(pl->getPiece()) == piece)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (duplicate)
+                {
+                    cout << "Someone has already chosen that piece, pick another :)" << endl;
+                }
+                else
+                {
                     break;
                 }
             }
-            if (duplicate)
-            {
-                cout << "Someone has already chosen that piece, pick another :)" << endl;
-            }
-            else
-            {
-                break;
-            }
+            players.emplace_back(new Player{name, piece, 1500, 0, 0, false});
         }
-        players.emplace_back(new Player{name, piece, 1500, 0, 0, false});
     }
- }
     
     // Create a board of 40 squares.
     vector<Square *> board(40, nullptr);
@@ -233,66 +233,103 @@ int main(int argc, char* argv[])
                         board[newPos]->landOn(p);
                     }
                     
-                    // Check if the player is in DC Tims Line and was sent there.
-                    if (p->getPosn() == 10 && p->isSentToTims()) {
-                        p->incrementTimsLineTurns();
-                        cout << p->getName() << " is in DC Tims Line (turn " 
-                             << p->getTimsLineTurns() << " of 3)." << endl;
-                        cout << p->getName() << ", what option would you like to use to get out of jail:" << endl;
-                        cout << "1) Roll Doubles" << endl;
-                        cout << "2) Pay $50" << endl;
-                        cout << "3) Use Roll Up the Rim cup" << endl;
-                        int code;
-                        cin >> code;
-                        bool break_out = false;
-                        while (true && p->getTimsLineTurns() != 3) {
-                            if (code == 1) {
-                                bool d = p->roll();
-                                if (d) {
-                                    p->setSentToTims(false);
-                                    p->resetTimsLineTurns();
-                                    break_out = true;
-                                    break;
-                                } else {
-                                    p->setPosition(10);
-                                    cout << "You did not roll doubles." << endl;
-                                    break;
-                                }
-                            }
-                            if (code == 2) {
-                                if (p->getMoney() >= 50) {
-                                    p->pay(50);
-                                    cout << p->getName() << " pays $50 to exit DC Tims Line." << endl;
-                                    p->setSentToTims(false);
-                                    p->resetTimsLineTurns();
-                                    break_out = true;
-                                    break;
-                                } else {
-                                    cout << "You do not have enough money. Please choose option 1 or 3." << endl;
-                                }
-                            }
-                            if (code == 3) {
-                                if (p->getTimsCupsVal() > 0) {
-                                    p->useCup();
-                                    cout << p->getName() << " uses a Roll Up the Rim cup." << endl;
-                                    p->setSentToTims(false);
-                                    p->resetTimsLineTurns();
-                                    break_out = true;
-                                    break;
-                                } else {
-                                    cout << "You do not have any Roll Up the Rim cups. Please choose option 1." << endl;
-                                }
-                            }
-                            cout << "Invalid choice. Please try again: ";
+                    // Check if the player is in DC Tims Line and was sent there (via GoToTimsSquare).
+                    // (Assuming that when sent, p->isSentToTims() is true.)
+                    if (newPos == 30 && p->isSentToTims()) {
+                        if (p->getPosn() == 10 && p->isSentToTims()) {
+                            p->incrementTimsLineTurns();
+                            cout << p->getName() << " is in DC Tims Line (turn " 
+                                 << p->getTimsLineTurns() << " of 3)." << endl;
+                            if (p->getTimsLineTurns() == 3) {
+                                int choice;
+                                while (true) {
+                                    cout << p->getName() << ", you have been in DC Tims Line for 3 turns." << endl;
+                                    cout << "Select an option:" << endl;
+                                    cout << "  1) Pay $50" << endl;
+                                    cout << "  2) Use a Roll Up the Rim cup" << endl;
+                                    cout << "Enter choice (1 or 2): ";
+                                    cin >> choice;
+                                    if (choice == 1) {
+                                        if (p->getMoney() >= 50) {
+                                            p->pay(50);
+                                            cout << p->getName() << " pays $50 to exit DC Tims Line." << endl;
+                                            break;
+                                        } else {
+                                            cout << "You do not have enough money. Please choose option 2." << endl;
+                                        }
+                                    } else if (choice == 2) {
+                                        if (p->getTimsCupsVal() > 0) {
+                                            p->useCup();  // Decrement the player's cup count.
+                                            cout << p->getName() << " uses a Roll Up the Rim cup to exit DC Tims Line." << endl;
+                                            break;
+                                        } else {
+                                            cout << "You do not have any Roll Up the Rim cups. Please choose option 1." << endl;
+                                        }
+                                    }
+                                } 
+                            }   
+                            cout << p->getName() << ", what option would you like to use to get out of jail:" << endl;
+                            cout << "1) Roll Doubles" << endl;
+                            cout << "2) Pay $50" << endl;
+                            cout << "3) Use Roll Up the Rim cup" << endl;
+                            int code;
                             cin >> code;
+                            bool break_out = false;
+                            while (true && p->getTimsLineTurns() != 3) {
+                                if (code == 1) {
+                                    bool d = p->roll();
+                                    if (d) {
+                                        p->setSentToTims(false);
+                                        p->resetTimsLineTurns();
+                                        break_out = true;
+                                        break;
+                                    } else {
+                                        cout << "Invalid choice. Please try again." << endl;
+                                        p->setPosition(10);
+                                        cout << "You did not roll doubles." << endl;
+                                        break;
+                                    }
+                                }
+                                // After the exit option is chosen, move the player the sum of the dice from their last roll.
+                                int exitSteps = p->getLastRollSum();
+                                p->move(exitSteps);
+                                p->setSentToTims(false);
+                                p->resetTimsLineTurns();
+                                if (code == 2) {
+                                    if (p->getMoney() >= 50) {
+                                        p->pay(50);
+                                        cout << p->getName() << " pays $50 to exit DC Tims Line." << endl;
+                                        p->setSentToTims(false);
+                                        p->resetTimsLineTurns();
+                                        break_out = true;
+                                        break;
+                                    } else {
+                                        cout << "You do not have enough money. Please choose option 1 or 3." << endl;
+                                    }
+                                }
+                                if (code == 3) {
+                                    if (p->getTimsCupsVal() > 0) {
+                                        p->useCup();
+                                        cout << p->getName() << " uses a Roll Up the Rim cup." << endl;
+                                        p->setSentToTims(false);
+                                        p->resetTimsLineTurns();
+                                        break_out = true;
+                                        break;
+                                    } else {
+                                        cout << "You do not have any Roll Up the Rim cups. Please choose option 1." << endl;
+                                    }
+                                }
+                                cout << "Invalid choice. Please try again: ";
+                                cin >> code;
+                            }
+                            if (break_out) {
+                                cout << p->getName() << " exits the DC Tims Line." << endl;
+                            } else {
+                                cout << p->getName() << " did not exit the DC Tims Line." << endl;
+                            }
                         }
-                        if (break_out) {
-                            cout << p->getName() << " exits the DC Tims Line." << endl;
-                        } else {
-                            cout << p->getName() << " did not exit the DC Tims Line." << endl;
-                        }
-                    }
-                    
+                    }  // <--- Missing closing brace added here to end the if (newPos == 30 && p->isSentToTims()) block
+
                     // Award OSAP if the player passed or landed on OSAP.
                     if (!p->isSentToTims() && (newPos < oldPos || newPos == 0)) {
                         p->receive(200);

@@ -16,20 +16,20 @@ Player::~Player() {
 }
 
 bool Player::roll() { 
-    int  die1 = prng1(1,6); 
-    int  die2 = prng1(1,6);
-    //int oldPos = posn;
-    //int die1 = 1; //10
-    //int die2 = 1; //20
+    // int  die1 = prng1(1,6); 
+    // int  die2 = prng1(1,6);
+    int oldPos = posn;
+    int die1 = 10; //10
+    int die2 = 20; //20
     int steps = die1 + die2;
     lastRollSum = steps;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
     move(steps);
-    /*if (oldPos + steps >= 40) {
+    if (oldPos + steps >= 40) {
         passedOSAP = true;
     } else {
         passedOSAP = false;
-    }*/
+    }
     return (die1 == die2);
 }
 
