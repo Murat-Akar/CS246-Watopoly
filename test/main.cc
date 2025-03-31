@@ -159,7 +159,7 @@ int main()
         {
             Player *p = players[currentPlayerIndex];
             cout << "\nAnyone can choose to (trade/mortgage/unmortgage) at anytime if resources allow. " << endl;
-            cout << p->getName() << "'s turn. (roll/next/buy/assets/improvements/quit): ";
+            cout << p->getName() << "'s turn. (roll/next/buy/assets/all/improvements/quit/save): ";
             string cmd;
             cin >> cmd;
             int pos = p->getPosn();
@@ -303,6 +303,17 @@ int main()
                 else
                 {
                     cout << "Unknown trade type." << endl;
+                }
+            }
+            else if (cmd == "all") {
+                if (board[pos]->getName() == "TUITION") {
+                    cout << "This command does not function on this square" << endl;
+                }
+                else {
+                    for (auto it = players.begin(); it != players.end(); it++) {
+                        cout << (*it)->getName() << " assets are:" << endl;
+                        (*it)->assets();
+                    }
                 }
             }
             else if (cmd == "mortgage")

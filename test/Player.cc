@@ -85,9 +85,12 @@ void Player::bankrupt(Player *other) {
 
 void Player::assets() const {
     for(auto s : buildingsOwned)
-        cout << "Building: " << s->getName() << endl;
+        cout << "Building(s): " << s->getName() << endl;
 
-    cout << "You also have $" << getMoney() << endl;
+    if (buildingsOwned.size() == 0) {
+        cout << "Building(s): None" << endl;
+    }
+    cout << "Money: $" << getMoney() << endl;
 }
 
 void Player::setPosition(int position) {
