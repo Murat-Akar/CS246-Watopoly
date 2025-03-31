@@ -73,7 +73,7 @@ void SLCSquare::applyAction(Player *p) {
     
     if (pd_ptr) {
         const PropertyData &pd = *pd_ptr;
-        if (pd.improvable) {
+        if (pd.improvable || pd.ownable) {
             // Create a new PurchasableSquare using the real property name and data.
             PurchasableSquare *tempSquare = new PurchasableSquare(
                 realName,
