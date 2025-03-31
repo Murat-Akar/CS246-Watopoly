@@ -159,15 +159,22 @@ void PurchasableSquare::dec_improvementLevel(Player *p) {
     }
 }
 
-void PurchasableSquare::auction(vector<Player*>& players) {
+void PurchasableSquare::auction(vector<Player*>& players, int idx) {
     int currentBid = 0;
     Player* highestBidder = nullptr;
+    players.erase(players.begin() + idx);
     vector<Player*> remainingPlayers = players;  // Players still participating in the auction
     
     cout << "Auction for " << getName() << " begins!" << endl;
-    
-    while (remainingPlayers.size() > 1) {
-        for (auto it = remainingPlayers.begin(); it != remainingPlayers.end();) {
+    int count = 0;
+
+    while (remainingPlayers.size() >= 1) {
+        for (auto it = remainingPlayers.begin(); it != remainingPlayers.end(); count++) {
+            if (count == idx) {
+                it++;
+                continue;
+            }
+        
             Player* bidder = *it;
             cout << bidder->getName() << ", the current bid is $" << currentBid << ". Do you want to (b)id or (w)ithdraw? ";
             char choice;
@@ -179,7 +186,10 @@ void PurchasableSquare::auction(vector<Player*>& players) {
             } else if (choice == 'b' || choice == 'B') {
                 int totalBid;
                 cout << "Enter your total bid (must be more than $" << currentBid << "): ";
-                cin >> totalBid;
+                if (!(cin >> totalBid)) {
+                    cin.clear();
+                    cin.ignore();
+                }
                 
                 // Ensure the bid is higher than the last bid and the player can afford it
                 if (totalBid > currentBid && totalBid <= bidder->getMoney()) {

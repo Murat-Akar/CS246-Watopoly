@@ -10,5 +10,10 @@ CoopFeeSquare::CoopFeeSquare(int posn, int fee)
 
 void CoopFeeSquare::applyAction(Player *p) {
     cout << p->getName() << " pays a co-op fee of $" << fee << ".\n";
-    p->pay(fee);
+    if (p->getMoney() < fee) {
+        cout << "You don't have enough money to pay the fee! Either mortgage property or file bankruptcy" << endl;
+        
+    } else {
+        p->pay(fee);
+    }
 }

@@ -467,7 +467,7 @@ int main(int argc, char* argv)
                             p->bankrupt(ps->getOwner());
                             players.erase(players.begin() + currentPlayerIndex);
                             cout << p->getName() << " is now out of the game and " << ps->getOwner() << " has take all of their assets" << endl;
-                            ps->auction(players);
+                            ps->auction(players, currentPlayerIndex);
                         }
                 }
              }
@@ -476,7 +476,7 @@ int main(int argc, char* argv)
                 if (!is_bought) {
                     PurchasableSquare* ps = dynamic_cast<PurchasableSquare*>(board[pos]);
                     if (ps) {
-                        ps->auction(players);
+                        ps->auction(players, currentPlayerIndex);
                     } else {
                         cout << "Not auctionable square." << endl;
                     }
