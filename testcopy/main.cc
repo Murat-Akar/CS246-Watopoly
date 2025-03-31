@@ -101,9 +101,9 @@ int main() {
     board[4]  = new TuitionSquare(4, 300);
     board[5]  = new PurchasableSquare("MKV", 5, 200, true, "None", 0, nullptr, false);
     board[6]  = new PurchasableSquare("ECH", 6, 100, true, "Arts2", 0, nullptr, false);
-    board[7] = new NeedlesHallSquare(7);
-    board[8] = new PurchasableSquare("PAS", 8, 300, true, "Arts2", 0, nullptr, false);
-    board[9] = new PurchasableSquare("HH", 9, 320, true, "Arts2", 0, nullptr, false);
+    board[7]  = new NeedlesHallSquare(7);
+    board[8]  = new PurchasableSquare("PAS", 8, 300, true, "Arts2", 0, nullptr, false);
+    board[9]  = new PurchasableSquare("HH", 9, 320, true, "Arts2", 0, nullptr, false);
     board[10] = new TimsLineSquare(10, 0);
     board[11] = new PurchasableSquare("RCH", 11, 140, true, "Eng", 0, nullptr, false);
     board[12] = new PurchasableSquare("PAC", 12, 150, true, "NONE", 0, nullptr, false);
@@ -120,10 +120,10 @@ int main() {
     board[23] = new PurchasableSquare("EV2", 23, 220, true, "Env", 0, nullptr, false);
     board[24] = new PurchasableSquare("EV3", 24, 220, true, "Env", 0, nullptr, false);
     board[25] = new PurchasableSquare("V1", 25, 200, true, "NONE", 0, nullptr, false);
-    board[26]  = new PurchasableSquare("PHYS", 26, 120, true, "Sci1", 0, nullptr, false);
-    board[27]  = new PurchasableSquare("B1", 27, 100, true, "Sci1", 0, nullptr, false);
+    board[26] = new PurchasableSquare("PHYS", 26, 120, true, "Sci1", 0, nullptr, false);
+    board[27] = new PurchasableSquare("B1", 27, 100, true, "Sci1", 0, nullptr, false);
     board[28] = new PurchasableSquare("CIF", 28, 150, true, "NONE", 0, nullptr, false);
-    board[29]  = new PurchasableSquare("B2", 29, 100, true, "Sci1", 0, nullptr, false);
+    board[29] = new PurchasableSquare("B2", 29, 100, true, "Sci1", 0, nullptr, false);
     board[30] = new GoToTimsSquare(30);
     board[31] = new PurchasableSquare("EIT", 31, 300, true, "Sci2", 0, nullptr, false);
     board[32] = new PurchasableSquare("ESC", 32, 300, true, "Sci2", 0, nullptr, false);
@@ -142,6 +142,7 @@ int main() {
     while (!gameOver) {
         bool command_loop = true;
         bool canRoll = true;
+        int oldPos = 0;  // Declare oldPos outside the inner loop.
         while (command_loop) {
             Player *p = players[currentPlayerIndex];
             cout << "\n" << p->getName() << "'s turn. (roll/next/buy/assets/trade/mortgage/unmortgage/quit): ";
@@ -152,57 +153,74 @@ int main() {
                 if (!canRoll) {
                     cout << "You have already rolled this turn. Please choose another command." << endl;
                 } else {
-                    int oldPos = p->getPosn();
+                    oldPos = p->getPosn();
                     bool doubles = p->roll();
                     int newPos = p->getPosn();
                     cout << p->getName() << " (" << p->getPiece() << ") landed on " 
                          << board[newPos]->getName() << ".\n";
                     board[newPos]->landOn(p);
                     
-                    // Check if the player is in DC Tims Line and was sent there (via GoToTimsSquare).
-                    // (Assuming that when sent, p->isSentToTims() is true.)
-                    if (newPos == 30 && p->isSentToTims()) {
+                    // Check if the player is in DC Tims Line and was sent there.
+                    if (p->getPosn() == 10 && p->isSentToTims()) {
                         p->incrementTimsLineTurns();
                         cout << p->getName() << " is in DC Tims Line (turn " 
                              << p->getTimsLineTurns() << " of 3)." << endl;
-                        if (p->getTimsLineTurns() == 3) {
-                            int choice;
-                            while (true) {
-                                cout << p->getName() << ", you have been in DC Tims Line for 3 turns." << endl;
-                                cout << "Select an option:" << endl;
-                                cout << "  1) Pay $50" << endl;
-                                cout << "  2) Use a Roll Up the Rim cup" << endl;
-                                cout << "Enter choice (1 or 2): ";
-                                cin >> choice;
-                                if (choice == 1) {
-                                    if (p->getMoney() >= 50) {
-                                        p->pay(50);
-                                        cout << p->getName() << " pays $50 to exit DC Tims Line." << endl;
-                                        break;
-                                    } else {
-                                        cout << "You do not have enough money. Please choose option 2." << endl;
-                                    }
-                                } else if (choice == 2) {
-                                    if (p->getTimsCupsVal() > 0) {
-                                        p->useCup();  // Decrement the player's cup count.
-                                        cout << p->getName() << " uses a Roll Up the Rim cup to exit DC Tims Line." << endl;
-                                        break;
-                                    } else {
-                                        cout << "You do not have any Roll Up the Rim cups. Please choose option 1." << endl;
-                                    }
+                        cout << p->getName() << ", what option would you like to use to get out of jail:" << endl;
+                        cout << "1) Roll Doubles" << endl;
+                        cout << "2) Pay $50" << endl;
+                        cout << "3) Use Roll Up the Rim cup" << endl;
+                        int code;
+                        cin >> code;
+                        bool break_out = false;
+                        while (true && p->getTimsLineTurns() != 3) {
+                            if (code == 1) {
+                                bool d = p->roll();
+                                if (d) {
+                                    p->setSentToTims(false);
+                                    p->resetTimsLineTurns();
+                                    break_out = true;
+                                    break;
                                 } else {
-                                    cout << "Invalid choice. Please try again." << endl;
+                                    p->setPosition(10);
+                                    cout << "You did not roll doubles." << endl;
+                                    break;
                                 }
                             }
-                            // After the exit option is chosen, move the player the sum of the dice from their last roll.
-                            int exitSteps = p->getLastRollSum();
-                            p->move(exitSteps);
-                            p->setSentToTims(false);
-                            p->resetTimsLineTurns();
+                            if (code == 2) {
+                                if (p->getMoney() >= 50) {
+                                    p->pay(50);
+                                    cout << p->getName() << " pays $50 to exit DC Tims Line." << endl;
+                                    p->setSentToTims(false);
+                                    p->resetTimsLineTurns();
+                                    break_out = true;
+                                    break;
+                                } else {
+                                    cout << "You do not have enough money. Please choose option 1 or 3." << endl;
+                                }
+                            }
+                            if (code == 3) {
+                                if (p->getTimsCupsVal() > 0) {
+                                    p->useCup();
+                                    cout << p->getName() << " uses a Roll Up the Rim cup." << endl;
+                                    p->setSentToTims(false);
+                                    p->resetTimsLineTurns();
+                                    break_out = true;
+                                    break;
+                                } else {
+                                    cout << "You do not have any Roll Up the Rim cups. Please choose option 1." << endl;
+                                }
+                            }
+                            cout << "Invalid choice. Please try again: ";
+                            cin >> code;
+                        }
+                        if (break_out) {
+                            cout << p->getName() << " exits the DC Tims Line." << endl;
+                        } else {
+                            cout << p->getName() << " did not exit the DC Tims Line." << endl;
                         }
                     }
                     
-                    // Award OSAP if the player was NOT sent to Tims and their move wrapped around.
+                    // Award OSAP if the player passed or landed on OSAP.
                     if (!p->isSentToTims() && (newPos < oldPos || newPos == 0)) {
                         p->receive(200);
                         cout << p->getName() << " collects $200 from OSAP." << endl;
@@ -297,8 +315,7 @@ int main() {
                 } else {
                     cout << "Unknown trade type." << endl;
                 }
-            }
-            else if (cmd == "mortgage") {
+            } else if (cmd == "mortgage") {
                 string piece, building;
                 Player *mortgaging_player = nullptr;
                 cout << "Enter the piece of the player mortgaging: ";
@@ -312,6 +329,7 @@ int main() {
                     }
                 }
                 if (mortgaging_player) {
+                    // Uncomment when implemented:
                     // mortgaging_player->mortgage(building);
                 }
             } else if (cmd == "unmortgage") {
@@ -328,6 +346,7 @@ int main() {
                     }
                 }
                 if (unmortgaging_player) {
+                    // Uncomment when implemented:
                     // unmortgaging_player->unmortgage(building);
                 }
             } else if (cmd == "next") {
