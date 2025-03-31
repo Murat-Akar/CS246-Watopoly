@@ -20,8 +20,14 @@ SLCSquare::SLCSquare(int posn)
 }
 
 void SLCSquare::applyAction(Player *p) {
-    static PRNG prng; 
+    static PRNG prng;
     int roll = prng(1, 24);
+
+    if (totalCups < 4 && prng(1, 100) <= 1) { 
+        cout << p->getName() << " receives a Roll Up the Rim cup!\n";
+        p->receivedCup();
+        totalCups++;  
+    }
 
     if (roll <= 3) { 
         cout << p->getName() << " moves back 3.\n";
@@ -47,13 +53,6 @@ void SLCSquare::applyAction(Player *p) {
     } else {
         cout << p->getName() << " advances to Collect OSAP.\n";
         p->setPosition(0); 
-    }
-
-    
-    if (totalCups < 4 && prng(1, 100) <= 1) { 
-        cout << p->getName() << " receives a Roll Up the Rim cup!\n";
-        p->receivedCup();
-        totalCups++;  
     }
 
     // Use the player's updated position.
