@@ -5,9 +5,8 @@
 
 using namespace std;
 
-extern int totalCups;
-extern int totalCups;
-extern PRNG prng1; 
+extern int totalCups; // Keeping track of total cups across all players
+extern PRNG prng1;    // Use the global PRNG that's already seeded in main
 
 NeedlesHallSquare::NeedlesHallSquare(int posn)
     : ActionSquare("NEEDLES HALL", posn) {

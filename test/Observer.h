@@ -7,4 +7,4 @@ public:
     virtual ~Observer() {}
 };
 
-#endif
+#endif // OBSERVER_H

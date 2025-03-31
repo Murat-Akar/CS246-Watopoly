@@ -7,4 +7,5 @@ TimsLineSquare::TimsLineSquare(int posn, int cups)
 
 void TimsLineSquare::applyAction(Player *p) {
     cout << p->getName() << " landed on DC Tims Line. (No immediate effect.)\n";
+    // Special handling for leaving Tims Line goes in your game loop.
 }

@@ -17,15 +17,22 @@
 #include "GameState.h"
 #include "Subject.h"
 #include "TextObserver.h"
-#include <unistd.h> 
+#include <unistd.h> // getpid
 #include "PRNG.h"
 
 using namespace std;
 
+bool win(int size) {
+    if (size == 1) {
+        return true;
+    }
+    return false;
+}
+
 int totalCups = 0;
 
 PRNG prng1, prng2, prng3; // global PRNG instances
-extern PRNG prng1;
+extern PRNG prng1;        // declaration to use prng1 in another translation unit
 
 int main(int argc, char* argv[])
 {
@@ -126,7 +133,7 @@ int main(int argc, char* argv[])
         }
     }
     
-    // Creating a board of 40 squares.
+    // Create a board of 40 squares.
     vector<Square *> board(40, nullptr);
     board[0] = new CollectOSAPSquare(0, 200);
     board[1] = new PurchasableSquare("AL", 1, 40, true, "Arts1", 0, nullptr, false);
@@ -225,6 +232,7 @@ int main(int argc, char* argv[])
                              << board[newPos]->getName() << ".\n";
                         board[newPos]->landOn(p);
                     } else {
+                        // Normal roll.
                         doubles = p->roll();
                         newPos = p->getPosn();
                         cout << p->getName() << " (" << p->getPiece() << ") landed on " 
@@ -282,6 +290,12 @@ int main(int argc, char* argv[])
                                 if (p->getTimsLineTurns() == 3) {
                                     int choice;
                                     while (true) {
+                                        if (p->getMoney() < 50 && p->getTimsCupsVal() <= 0) {
+                                            cout << p->getName() << "cannot pay $50 and has no Roll up the Rim Cups" << endl;
+                                            p->broke("BANK",50);
+                                            p->broke_in_tims_line = true;
+                                            break;
+                                        }
                                         cout << p->getName() << ", you have been in DC Tims Line for 3 turns." << endl;
                                         cout << "Select an option:" << endl;
                                         cout << "  1) Pay $50" << endl;
@@ -474,10 +488,12 @@ int main(int argc, char* argv[])
                 if (mortgaging_player)
                 {
                     bool found = false;
+                    // Loop over the player's owned buildings to find the matching building.
                     for (auto s : mortgaging_player->buildingsOwned)
                     {
                         if (s->getName() == buildingName)
                         {
+                            // Cast to PurchasableSquare and call mortgage().
                             PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
                             if (ps)
                             {
@@ -515,10 +531,12 @@ int main(int argc, char* argv[])
                 if (unmortgaging_player)
                 {
                     bool found = false;
+                    // Loop over the player's owned buildings to find the matching building.
                     for (auto s : unmortgaging_player->buildingsOwned)
                     {
                         if (s->getName() == buildingName)
                         {
+                            // Cast to PurchasableSquare and call unmortgage().
                             PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
                             if (ps)
                             {
@@ -577,11 +595,34 @@ int main(int argc, char* argv[])
                             p->bankrupt(players);
                             players.erase(players.begin() + currentPlayerIndex);
                             cout << p->getName() << " is now out of the game and the Bank has taken all of their assets" << endl;
+                            if (win(players.size())) {
+                                cout << "There is only one player left, that means the winner is " << 
+                                (*players.begin())->getName() << "congratulations!!!" << endl;
+                                command_loop = false;
+                                gameOver = true;
+                                continue;
+                            }
+                            else {
+                                cout << "There are " << players.size() << " players left!";
+                                command_loop = false;
+                            }
                         }
                         else {
                             p->bankrupt(ps->getOwner());
                             players.erase(players.begin() + currentPlayerIndex);
                             cout << p->getName() << " is now out of the game and " << ps->getOwner() << " has take all of their assets" << endl;
+                            if (win(players.size())) {
+                                cout << "There is only one player left, that means the winner is " << 
+                                (*players.begin())->getName() << "congratulations!!!" << endl;
+                                command_loop = false;
+                                gameOver = true;
+                                cout << "Game Over!" << endl;
+                                continue;
+                            }
+                            else {
+                                cout << "There are " << players.size() << " players left!";
+                                command_loop = false;
+                            }
                             ps->auction(players, currentPlayerIndex);
                         }
                 }
@@ -598,7 +639,19 @@ int main(int argc, char* argv[])
             }
             else if (cmd == "next")
             {
-                if (!is_bought) {
+                command_loop = false;
+                if (p->isBroke()) {
+                    cout << "You must pay before you advance further." << endl;
+                    cout << "You owe " << p->debtAmount() << " to " << p->indebtedTo()
+                    << " . You must either file for bankruptcy or (mortgage/trade)" << endl;
+                    command_loop = true;
+                    cout << "If you have the funds to pay the balanced debt then type <pay> (without angle brackets) once everything is complete, in order to fulfill your debts" 
+                         << endl;
+                }
+                else {
+                    command_loop = false;
+                }
+                if (!is_bought && !p->isBroke()) {
                     PurchasableSquare* ps = dynamic_cast<PurchasableSquare*>(board[pos]);
                     if (ps) {
                         ps->auction(players, currentPlayerIndex);
@@ -606,7 +659,6 @@ int main(int argc, char* argv[])
                         cout << "Not an auctionable square." << endl;
                     }
                 }
-                command_loop = false;
             }
             else if (cmd == "quit")
             {
@@ -614,6 +666,45 @@ int main(int argc, char* argv[])
                 gameOver = true;
                 cout << "Game Over!" << endl;
                 continue;
+            }
+            else if (cmd == "pay" && p->isBroke()) {
+                if (p->broke_in_tims_line) {
+                    if (p->getMoney() >= p->debtAmount()) {
+                        p->pay(p->debtAmount());
+                        p->setSentToTims(false);
+                        p->resetTimsLineTurns();
+                        int exitSteps = p->getLastRollSum();
+                        p->move(exitSteps);
+                        cout << "You have now paid your dues, you may now progress as usual..." << endl;
+                        p->setindebtedTo("");
+                        p->setisBroke(false);
+                        p->setdebtAmount(0);
+                        continue;
+                    }
+                }
+                if (p->getMoney() >= p->debtAmount()) {
+                    if (p->indebtedTo() != "BANK") {
+                        for (auto it = players.begin(); it != players.end(); ++it) {
+                            if ((*it)->getName() == p->indebtedTo()) {
+                                p->pay(p->debtAmount());
+                                (*it)->receive(p->debtAmount());
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        p->pay(p->debtAmount());
+                    }
+                    cout << "You have now paid your dues, you may now progress as usual..." << endl;
+                    p->setindebtedTo("");
+                    p->setisBroke(false);
+                    p->setdebtAmount(0);
+                }
+                else {
+                    cout << "You must pay before you advance further." << endl;
+                    cout << "You owe " << p->debtAmount() << " to " << p->indebtedTo()
+                    << " . You must either file for bankruptcy or (mortgage/trade)" << endl;
+                }
             }
             else
             {

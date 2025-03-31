@@ -10,4 +10,4 @@ void saveGameState(const std::vector<Player*>& players, const std::vector<Square
 
 bool loadGameState(std::vector<Player*>& players, std::vector<Square*>& board, int &currentPlayerIndex, const std::string &filename);
 
-#endif
+#endif // GAMESTATE_H

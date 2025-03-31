@@ -9,4 +9,4 @@ public:
     virtual void applyAction(Player *p) override;
 };
 
-#endif
+#endif // GOTO_TIMS_SQUARE_H

@@ -9,7 +9,8 @@ using namespace std;
 extern PRNG prng1;
 
 Player::Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine)
-    : name{name}, piece{piece}, money{money}, posn{posn}, timsCups{timsCup}, inTimsLine{inTimsLine}, timsLineTurns{0}, sentToTims{false}, passedOSAP{false}, lastRollSum{0} {}
+    : name{name}, piece{piece}, money{money}, posn{posn}, timsCups{timsCup}, inTimsLine{inTimsLine}, timsLineTurns{0}, sentToTims{false}, passedOSAP{false}, lastRollSum{0},
+      broke_b{false}, brokeTo{""}, amountOwed{0} {}
 
 Player::~Player() {
     buildingsOwned.clear();
@@ -18,13 +19,52 @@ Player::~Player() {
 bool Player::roll() { 
     int  die1 = prng1(1,6); 
     int  die2 = prng1(1,6);
+    // int oldPos = posn;
+    // int die1 = 10; //10
+    // int die2 = 20; //20
     int steps = die1 + die2;
     lastRollSum = steps;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
     move(steps);
+    // if (oldPos + steps >= 40) {
+    //     passedOSAP = true;
+    // } else {
+    //     passedOSAP = false;
+    // }
     return (die1 == die2);
 }
 
+void Player::broke(string name, int amount_owed) {
+    cout << "YOU HAVE LESS THAN YOU OWE! YOU ARE NOW BROKE AND MUST FIND MONEY OR GO BANKRUPT" << endl;
+    broke_b = true;
+    if (name == "BANK") {
+        brokeTo = "BANK";
+        amountOwed = amount_owed;
+    }
+    else {
+        brokeTo = name;
+        amountOwed = amount_owed;
+    }
+}
+
+bool Player::isBroke() {
+    return broke_b;
+}
+void Player::setisBroke(bool val) {
+    broke_b = val;
+}
+void Player::setindebtedTo(string val) {
+    brokeTo = val;
+}
+void Player::setdebtAmount(int n) {
+    amountOwed = n;
+}
+string Player::indebtedTo() {
+    return brokeTo;
+}
+int Player::debtAmount() {
+    return amountOwed;
+}
 void Player::move(int steps) {
     posn = (posn + steps) % 40;
     cout << name << " moved " << steps << " steps to position " << posn << endl;
@@ -69,8 +109,10 @@ void Player::atTimsLineSwitch() {
 void Player::pay(int amount) {
     if(money >= amount)
         money -= amount;
-    else
+    else {
         cout << "Insufficient funds" << endl;
+        broke("BANK", amount);
+    }
 }
 
 void Player::receive(int amount) {
@@ -195,15 +237,18 @@ void Player::trade(Player *other, const string &trading, const string &receiving
 }
 
 void Player::trade(Player *other, const string &receiving, int amount) {
+    // Check if the other player has enough money.
     if(other->getMoney() >= amount) {
+        // Look for the building in the trader's own properties.
         for(auto it = buildingsOwned.begin(); it != buildingsOwned.end(); ) {
             if((*it)->getName() == receiving) {
+                // Transfer the building from trader to other.
                 other->addBuilding(*it);
                 it = buildingsOwned.erase(it);
                 cout << name << " traded " << receiving << " for $" << amount 
                         << " from " << other->getName() << endl;
-                other->pay(amount);
-                receive(amount);
+                other->pay(amount);    // Other pays the amount.
+                receive(amount);       // Trader receives the amount.
                 return;
             } else {
                 ++it;
@@ -213,6 +258,7 @@ void Player::trade(Player *other, const string &receiving, int amount) {
     cout << "Trade failed." << endl;
 }
 
-void Player::attach(Observer* o) {}
-void Player::detach(Observer* o) {}
+// Observer pattern methods (currently no-op implementations)
+void Player::attach(Observer* o) { /* no-op */ }
+void Player::detach(Observer* o) { /* no-op */ }
 

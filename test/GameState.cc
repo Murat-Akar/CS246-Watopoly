@@ -16,6 +16,7 @@ void saveGameState(const vector<Player*>& players, const vector<Square*>& board,
     out << players.size() << endl;
     out << currentPlayerIndex << endl;
     for (auto it = players.begin(); it != players.end(); ++it) {
+        // Assuming Tims Line is square 10.
         if ((*it)->getPosn() == 10) {
             out << (*it)->getName() << " " << (*it)->getPiece() << " " << (*it)->getTimsCupsVal()
                 << " " << (*it)->getMoney() << " " << (*it)->getPosn() << " " << (*it)->getTimsLineTurns() << endl;
@@ -43,11 +44,13 @@ bool loadGameState(vector<Player*>& players, vector<Square*>& board, int &curren
             return false;
         }
         
+        // Read the number of players and the current player index.
         int numPlayers = 0;
         in >> numPlayers;
         in >> currentPlayerIndex;
-        in.ignore(); 
+        in.ignore(); // Consume the newline after reading currentPlayerIndex.
         
+        // Clear any existing players.
         for (auto p : players) {
             delete p;
         }
@@ -58,6 +61,7 @@ bool loadGameState(vector<Player*>& players, vector<Square*>& board, int &curren
             string playerLine;
             getline(in, playerLine);
             if (playerLine.empty()) {
+                // Skip empty lines.
                 i--;
                 continue;
             }
@@ -65,7 +69,7 @@ bool loadGameState(vector<Player*>& players, vector<Square*>& board, int &curren
             string name;
             char piece;
             int timsCups, money, pos;
-            int timsLineTurns = 0;
+            int timsLineTurns = 0; // default if not in Tims Line
             
             pss >> name >> piece >> timsCups >> money >> pos;
             if (pos == 10) {

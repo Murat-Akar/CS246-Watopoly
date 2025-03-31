@@ -9,4 +9,4 @@ public:
     virtual void applyAction(Player *p) override;
 };
 
-#endif
+#endif // SLC_SQUARE_H

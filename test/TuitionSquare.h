@@ -11,4 +11,4 @@ public:
     virtual void applyAction(Player *p) override;
 };
 
-#endif 
+#endif // TUITION_SQUARE_H

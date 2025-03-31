@@ -19,7 +19,7 @@ void TuitionSquare::applyAction(Player *p) {
         }
     }
     int tenPercent = totalWorth / 10;
-    cout << p->getName() << " must pay either $" << tuitionAmount << " or 10% of total worth ($" << tenPercent << ").\n";
+    cout << p->getName() << " must pay either $" << tuitionAmount << " or 10 percent of total worth ($" << tenPercent << ").\n";
     int finalPayment = 0;
     if (p->getMoney() >= 300) {
         finalPayment = 300;
