@@ -26,7 +26,16 @@ int totalCups = 0;
 PRNG prng1, prng2, prng3; // global PRNG instances
 extern PRNG prng1;        // declaration to use prng1 in another translation unit
 
-int main()
+/* TESTING HARNESS FOR ROLL
+int d1, d2;
+cout << "Enter Value Of First Die:";
+cin >> d1;
+cout << "\nEnter Value Of Second Die:" << endl;
+cin >> d2;
+bool doubles = p->roll_testing(d1, d2);
+// END OF TESTING HARNESS FOR ROLL*/
+
+int main(int argc, char* argv)
 {
     // Randomize PRNG seeds.
     uint32_t seed = getpid();
@@ -156,6 +165,7 @@ int main()
         bool command_loop = true;
         bool canRoll = true;
         bool is_bought = false;
+        int oldPos = 0;
         while (command_loop)
         {
             Player *p = players[currentPlayerIndex];
@@ -164,40 +174,90 @@ int main()
             string cmd;
             cin >> cmd;
             int pos = p->getPosn();
-            if (cmd == "roll")
-            {
-                if (!canRoll)
-                {
+            if (cmd == "roll") {
+                if (!canRoll) {
                     cout << "You have already rolled this turn. Please choose another command." << endl;
-                }
-                else
-                {
-                    // TESTING HARNESS FOR ROLL
-                    int d1, d2;
-                    cout << "Enter Value Of First Die:";
-                    cin >> d1;
-                    cout << "\nEnter Value Of Second Die:" << endl;
-                    cin >> d2;
-                    bool doubles = p->roll_testing(d1, d2);
-                    // END OF TESTING HARNESS FOR ROLL
-
-                    // bool doubles = p->roll();
-                    pos = p->getPosn();
-                    cout << p->getName() << " (" << p->getPiece() << ") landed on square "
-                         << board[pos]->getName() << ".\n";
-                    board[pos]->landOn(p);
-                    if (!doubles)
-                    {
+                } else {
+                    oldPos = p->getPosn();
+                    bool doubles = p->roll();
+                    int newPos = p->getPosn();
+                    cout << p->getName() << " (" << p->getPiece() << ") landed on " 
+                         << board[newPos]->getName() << ".\n";
+                    board[newPos]->landOn(p);
+                    
+                    // Check if the player is in DC Tims Line and was sent there.
+                    if (p->getPosn() == 10 && p->isSentToTims()) {
+                        p->incrementTimsLineTurns();
+                        cout << p->getName() << " is in DC Tims Line (turn " 
+                             << p->getTimsLineTurns() << " of 3)." << endl;
+                        cout << p->getName() << ", what option would you like to use to get out of jail:" << endl;
+                        cout << "1) Roll Doubles" << endl;
+                        cout << "2) Pay $50" << endl;
+                        cout << "3) Use Roll Up the Rim cup" << endl;
+                        int code;
+                        cin >> code;
+                        bool break_out = false;
+                        while (true && p->getTimsLineTurns() != 3) {
+                            if (code == 1) {
+                                bool d = p->roll();
+                                if (d) {
+                                    p->setSentToTims(false);
+                                    p->resetTimsLineTurns();
+                                    break_out = true;
+                                    break;
+                                } else {
+                                    p->setPosition(10);
+                                    cout << "You did not roll doubles." << endl;
+                                    break;
+                                }
+                            }
+                            if (code == 2) {
+                                if (p->getMoney() >= 50) {
+                                    p->pay(50);
+                                    cout << p->getName() << " pays $50 to exit DC Tims Line." << endl;
+                                    p->setSentToTims(false);
+                                    p->resetTimsLineTurns();
+                                    break_out = true;
+                                    break;
+                                } else {
+                                    cout << "You do not have enough money. Please choose option 1 or 3." << endl;
+                                }
+                            }
+                            if (code == 3) {
+                                if (p->getTimsCupsVal() > 0) {
+                                    p->useCup();
+                                    cout << p->getName() << " uses a Roll Up the Rim cup." << endl;
+                                    p->setSentToTims(false);
+                                    p->resetTimsLineTurns();
+                                    break_out = true;
+                                    break;
+                                } else {
+                                    cout << "You do not have any Roll Up the Rim cups. Please choose option 1." << endl;
+                                }
+                            }
+                            cout << "Invalid choice. Please try again: ";
+                            cin >> code;
+                        }
+                        if (break_out) {
+                            cout << p->getName() << " exits the DC Tims Line." << endl;
+                        } else {
+                            cout << p->getName() << " did not exit the DC Tims Line." << endl;
+                        }
+                    }
+                    
+                    // Award OSAP if the player passed or landed on OSAP.
+                    if (!p->isSentToTims() && (newPos < oldPos || newPos == 0)) {
+                        p->receive(200);
+                        cout << p->getName() << " collects $200 from OSAP." << endl;
+                    }
+                    
+                    if (!doubles) {
                         canRoll = false;
-                    }
-                    else
-                    {
-                        cout << "Doubles rolled! You may roll again." << endl;
+                    } else {
+                        cout << "Doubles rolled! You may now roll again." << endl;
                     }
                 }
-            }
-            else if (cmd == "buy")
-            {
+            } else if (cmd == "buy") {
                 PurchasableSquare *ps = dynamic_cast<PurchasableSquare *>(board[pos]);
                 if (ps)
                 {
@@ -208,8 +268,7 @@ int main()
                 {
                     cout << "This square is not purchasable." << endl;
                 }
-            }
-            else if (cmd == "assets")
+            } else if (cmd == "assets")
             {
                 p->assets();
             }
