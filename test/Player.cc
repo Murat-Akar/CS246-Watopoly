@@ -18,18 +18,10 @@ Player::~Player() {
 bool Player::roll() { 
     int  die1 = prng1(1,6); 
     int  die2 = prng1(1,6);
-    //int oldPos = posn;
-    //int die1 = 1; //10
-    //int die2 = 1; //20
     int steps = die1 + die2;
     lastRollSum = steps;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
     move(steps);
-    /*if (oldPos + steps >= 40) {
-        passedOSAP = true;
-    } else {
-        passedOSAP = false;
-    }*/
     return (die1 == die2);
 }
 
@@ -203,18 +195,15 @@ void Player::trade(Player *other, const string &trading, const string &receiving
 }
 
 void Player::trade(Player *other, const string &receiving, int amount) {
-    // Check if the other player has enough money.
     if(other->getMoney() >= amount) {
-        // Look for the building in the trader's own properties.
         for(auto it = buildingsOwned.begin(); it != buildingsOwned.end(); ) {
             if((*it)->getName() == receiving) {
-                // Transfer the building from trader to other.
                 other->addBuilding(*it);
                 it = buildingsOwned.erase(it);
                 cout << name << " traded " << receiving << " for $" << amount 
                         << " from " << other->getName() << endl;
-                other->pay(amount);    // Other pays the amount.
-                receive(amount);       // Trader receives the amount.
+                other->pay(amount);
+                receive(amount);
                 return;
             } else {
                 ++it;
@@ -224,7 +213,6 @@ void Player::trade(Player *other, const string &receiving, int amount) {
     cout << "Trade failed." << endl;
 }
 
-// Observer pattern methods (currently no-op implementations)
-void Player::attach(Observer* o) { /* no-op */ }
-void Player::detach(Observer* o) { /* no-op */ }
+void Player::attach(Observer* o) {}
+void Player::detach(Observer* o) {}
 

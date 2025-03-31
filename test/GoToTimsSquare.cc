@@ -7,6 +7,6 @@ GoToTimsSquare::GoToTimsSquare(int posn)
 
 void GoToTimsSquare::applyAction(Player *p) {
     cout << p->getName() << " is sent to DC Tims Line!\n";
-    p->setPosition(10); // Assuming Tims Line is at index 10.
+    p->setPosition(10);
     p->setSentToTims(true);
 }

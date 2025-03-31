@@ -13,7 +13,7 @@
 #include <iostream>
 using namespace std;
 
-extern int totalCups; // Global variable for total cups
+extern int totalCups; 
 
 SLCSquare::SLCSquare(int posn)
     : ActionSquare("SLC", posn) {
@@ -56,10 +56,8 @@ void SLCSquare::applyAction(Player *p) {
         p->setPosition(0); 
     }
 
-    // Use the player's updated position.
     int new_posn = p->getPosn();
 
-    // Manually iterate over the property data map to find the entry for board index new_posn.
     const auto &data = PropertyData::getAcademicData();
 
     string realName;
@@ -75,7 +73,6 @@ void SLCSquare::applyAction(Player *p) {
     if (pd_ptr) {
         const PropertyData &pd = *pd_ptr;
         if (pd.improvable || pd.ownable) {
-            // Create a new PurchasableSquare using the real property name and data.
             PurchasableSquare *tempSquare = new PurchasableSquare(
                 realName,
                 new_posn,
@@ -90,7 +87,6 @@ void SLCSquare::applyAction(Player *p) {
             tempSquare->landOn(p);
             delete tempSquare;
         } else {
-            // For non-improvable properties, choose the correct square based on its real name.
             if (realName == "COOP FEE") {
                 CoopFeeSquare *tempSquare = new CoopFeeSquare(new_posn, 150);
                 cout << "Created CoopFeeSquare: " << tempSquare->getName() << endl;
@@ -122,7 +118,6 @@ void SLCSquare::applyAction(Player *p) {
                 delete tempSquare;
             }
             else if (realName == "SLC") {
-                // If it happens to be SLC again, re-instantiate an SLCSquare.
                 SLCSquare *tempSquare = new SLCSquare(new_posn);
                 cout << "Created SLCSquare: " << tempSquare->getName() << endl;
                 tempSquare->landOn(p);

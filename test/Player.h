@@ -6,9 +6,9 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include "Observer.h"  // For Observer definition; ensure observer.h exists in your project.
-#include "Square.h"    // Ensure this file exists with the full Square definition.
-#include "PRNG.h"      // For prng function.
+#include "Observer.h" 
+#include "Square.h"   
+#include "PRNG.h"    
 
 using namespace std;
 
@@ -49,7 +49,6 @@ public:
     void useCup();
     int getLastRollSum() const;
 
-    // Observer pattern methods (currently no-op implementations).
     void attach(Observer* o);
     void detach(Observer* o);
 
@@ -66,4 +65,4 @@ private:
     int lastRollSum;
 };
 
-#endif // PLAYER_H
+#endif 

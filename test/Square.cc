@@ -11,9 +11,7 @@ Square::Square(const string &name, int posn, int squareVal, bool isOwnable)
 {
 }
 
-Square::~Square() {
-    // Nothing to do here in this base implementation.
-}
+Square::~Square() {}
 
 const string& Square::getName() const {
     return name;
@@ -34,7 +32,6 @@ bool Square::isPurchasable() const {
 vector<string> Square::print_square(const vector<Player*>& players) const {
     vector<string> output;
     ostringstream oss;
-    // Lookup property data using the square's name.
     const PropertyData* data = PropertyData::lookup(name);
     
     // Line 1: if property is improvable, mark it with an I; otherwise blank.
@@ -123,7 +120,7 @@ vector<string> Square::print_square(const vector<Player*>& players) const {
     oss.str(""); oss.clear();
 
     // Line 4: Player initials based on position
-    oss << "|";  // start with the left border
+    oss << "|";
     string initials = "";
     for (auto p : players) {
         if (p->getPosn() == posn) {
@@ -131,16 +128,13 @@ vector<string> Square::print_square(const vector<Player*>& players) const {
         }
     }
 
-    // If there are players on the square, we only show up to 6 initials
     if (!initials.empty()) {
-        // Ensure the initials string doesn't exceed 6 characters
         initials = initials.substr(0, 6);
 
-        // Fill the remaining space with a blank if less than 6 initials
-        oss << left << setw(6) << initials;  // Ensure the initials take up 6 spaces
-        oss << " |";  // Right border
+        oss << left << setw(6) << initials;
+        oss << " |";
     } else {
-        oss << "       |";  // No player on this square
+        oss << "       |";
     }
 
     output.push_back(oss.str());

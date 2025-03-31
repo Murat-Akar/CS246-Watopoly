@@ -17,4 +17,4 @@ public:
     virtual ~TextObserver();
 };
 
-#endif // TEXTOBSERVER_H
+#endif

@@ -15,4 +15,4 @@ public:
     virtual ~Subject() = default;
 };
 
-#endif // SUBJECT_H
+#endif

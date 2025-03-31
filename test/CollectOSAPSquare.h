@@ -11,4 +11,4 @@ public:
     virtual void applyAction(Player *p) override;
 };
 
-#endif // COLLECTOSAP_SQUARE_H
+#endif 

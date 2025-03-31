@@ -5,7 +5,7 @@
 
 using namespace std;
 
-extern int totalCups; // Keeping track of total cups across all players
+extern int totalCups;
 
 NeedlesHallSquare::NeedlesHallSquare(int posn)
     : ActionSquare("NEEDLES HALL", posn) {

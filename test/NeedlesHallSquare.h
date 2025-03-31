@@ -9,4 +9,4 @@ public:
     virtual void applyAction(Player *p) override;
 };
 
-#endif // NEEDLESHALL_SQUARE_H
+#endif

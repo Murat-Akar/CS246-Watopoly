@@ -5,10 +5,10 @@
 
 class GooseNestingSquare : public ActionSquare {
 private:
-    int collectAmount; // Optional; adjust if needed.
+    int collectAmount;
 public:
     GooseNestingSquare(int posn, int collectAmount = 0);
     virtual void applyAction(Player *p) override;
 };
 
-#endif // GOOSE_NESTING_SQUARE_H
+#endif

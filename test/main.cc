@@ -17,7 +17,7 @@
 #include "GameState.h"
 #include "Subject.h"
 #include "TextObserver.h"
-#include <unistd.h> // getpid
+#include <unistd.h> 
 #include "PRNG.h"
 
 using namespace std;
@@ -25,7 +25,7 @@ using namespace std;
 int totalCups = 0;
 
 PRNG prng1, prng2, prng3; // global PRNG instances
-extern PRNG prng1;        // declaration to use prng1 in another translation unit
+extern PRNG prng1;
 
 int main(int argc, char* argv[])
 {
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
     }
  }
     
-    // Create a board of 40 squares.
+    // Creating a board of 40 squares.
     vector<Square *> board(40, nullptr);
     board[0] = new CollectOSAPSquare(0, 200);
     board[1] = new PurchasableSquare("AL", 1, 40, true, "Arts1", 0, nullptr, false);
@@ -225,7 +225,6 @@ int main(int argc, char* argv[])
                              << board[newPos]->getName() << ".\n";
                         board[newPos]->landOn(p);
                     } else {
-                        // Normal roll.
                         doubles = p->roll();
                         newPos = p->getPosn();
                         cout << p->getName() << " (" << p->getPiece() << ") landed on " 
@@ -446,12 +445,10 @@ int main(int argc, char* argv[])
                 if (mortgaging_player)
                 {
                     bool found = false;
-                    // Loop over the player's owned buildings to find the matching building.
                     for (auto s : mortgaging_player->buildingsOwned)
                     {
                         if (s->getName() == buildingName)
                         {
-                            // Cast to PurchasableSquare and call mortgage().
                             PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
                             if (ps)
                             {
@@ -489,12 +486,10 @@ int main(int argc, char* argv[])
                 if (unmortgaging_player)
                 {
                     bool found = false;
-                    // Loop over the player's owned buildings to find the matching building.
                     for (auto s : unmortgaging_player->buildingsOwned)
                     {
                         if (s->getName() == buildingName)
                         {
-                            // Cast to PurchasableSquare and call unmortgage().
                             PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
                             if (ps)
                             {

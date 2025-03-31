@@ -53,7 +53,7 @@ bool PurchasableSquare::landOn(Player *p) {
                 return false;
             }
             int rent = 0;
-            // Suppose if no improvements and not a monopoly, rent doubles.
+            // if no improvements and not a monopoly, rent doubles.
             if (improvementLevels == 0 && !isMonopoly())
                 rent = pd->rentTable[0] * 2;
             else
@@ -166,7 +166,6 @@ void PurchasableSquare::auction(vector<Player*>& players, int idx) {
     int currentBid = 0;
     Player* highestBidder = nullptr;
 
-    // Build a local vector of bidders that excludes the current player (at index idx)
     vector<Player*> remainingPlayers;
     for (size_t i = 0; i < players.size(); i++) {
         if ((int)i != idx) {
@@ -178,15 +177,13 @@ void PurchasableSquare::auction(vector<Player*>& players, int idx) {
 
     // Auction rounds.
     while (!remainingPlayers.empty()) {
-        // If only one bidder remains and they are already the highest bidder, end the auction.
         if (remainingPlayers.size() == 1 && highestBidder == remainingPlayers.front()) {
             break;
         }
 
-        bool roundBid = false; // flag to detect any bid change in this round
+        bool roundBid = false;
 
         if (remainingPlayers.size() == 1) {
-            // Single remaining bidder case.
             Player* bidder = remainingPlayers.front();
             char choice;
             cout << bidder->getName() << ", the current bid is $" << currentBid
@@ -219,7 +216,7 @@ void PurchasableSquare::auction(vector<Player*>& players, int idx) {
                     else
                         cout << "Insufficient funds for this bid." << endl;
                 }
-                break; // End the round after the single prompt.
+                break; 
             }
         } else {
             // Multiple bidders case.
@@ -255,22 +252,19 @@ void PurchasableSquare::auction(vector<Player*>& players, int idx) {
                             cout << "Your bid must be higher than the current bid of $" << currentBid << "." << endl;
                         else
                             cout << "Insufficient funds for this bid." << endl;
-                        // Do not increment iterator so bidder can try again.
                     }
                 }
             }
         }
-        // End bidding rounds if no bid was made in this round.
         if (!roundBid)
             break;
     }
 
-    // Award the property if there is a valid highest bid.
     if (highestBidder != nullptr && currentBid > 0) {
         cout << highestBidder->getName() << " wins the auction for " << getName()
              << " with a bid of $" << currentBid << "." << endl;
-        highestBidder->pay(currentBid);  // Deduct the bid amount from the winner.
-        highestBidder->addBuilding(this);  // Transfer the property.
+        highestBidder->pay(currentBid); 
+        highestBidder->addBuilding(this); 
     } else {
         cout << "No one bid. The property remains unowned." << endl;
     }
