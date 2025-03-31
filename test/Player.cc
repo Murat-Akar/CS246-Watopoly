@@ -9,7 +9,7 @@ using namespace std;
 extern PRNG prng1;
 
 Player::Player(const string &name, const char &piece, int money, int posn, int timsCup, bool inTimsLine)
-    : name{name}, piece{piece}, money(money), posn(posn), timsCups(timsCup), inTimsLine(inTimsLine), sentToTims(false), passedOSAP(false), timsLineTurns(0), lastRollSum(0) {}
+    : name{name}, piece{piece}, money{money}, posn{posn}, timsCups{timsCup}, inTimsLine{inTimsLine}, timsLineTurns{0}, sentToTims{false}, passedOSAP{false}, lastRollSum{0} {}
 
 Player::~Player() {
     buildingsOwned.clear();

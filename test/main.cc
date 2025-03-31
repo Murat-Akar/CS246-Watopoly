@@ -14,6 +14,7 @@
 #include "TimsLineSquare.h"
 #include "TuitionSquare.h"
 #include "PurchasableSquare.h"
+#include "GameState.h"
 #include "Subject.h"
 #include "TextObserver.h"
 #include <unistd.h> // getpid
@@ -35,7 +36,7 @@ cin >> d2;
 bool doubles = p->roll_testing(d1, d2);
 // END OF TESTING HARNESS FOR ROLL*/
 
-int main(int argc, char* argv)
+int main(int argc, char* argv[])
 {
     // Randomize PRNG seeds.
     uint32_t seed = getpid();
@@ -471,6 +472,16 @@ int main(int argc, char* argv)
                         }
                 }
              }
+            else if (cmd == "save") {
+                cout << "What is the filename you want to save the game under?" << endl;
+                cout << "Enter Here: ";
+                string file;
+                cin >> file;
+                saveGameState(players,board,currentPlayerIndex,file);
+                command_loop = false;
+                gameOver = true;
+                continue;
+            }
             else if (cmd == "next")
             {
                 if (!is_bought) {

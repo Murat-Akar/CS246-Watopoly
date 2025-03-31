@@ -158,7 +158,9 @@ void PurchasableSquare::dec_improvementLevel(Player *p) {
         cout << "Not an improvable square or minimum improvement level reached." << endl;
     }
 }
-
+void PurchasableSquare::setImprovementLevels(int level) {
+    improvementLevels = level;
+}
 void PurchasableSquare::auction(vector<Player*>& players) {
     int currentBid = 0;
     Player* highestBidder = nullptr;

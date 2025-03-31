@@ -25,6 +25,7 @@ public:
     void unmortgage();
     void inc_improvementLevel(Player *p);
     void dec_improvementLevel(Player *p);
+    void setImprovementLevels(int level);
     virtual bool landOn(Player *p) override;
     void setOwner(Player *new_owner);
     Player* getOwner();
