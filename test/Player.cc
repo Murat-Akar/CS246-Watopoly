@@ -20,7 +20,7 @@ bool Player::roll() {
     //int  die2 = prng1(1,6);
     int oldPos = posn;
     int die1 = 1; //10
-    int die2 = 3; //20
+    int die2 = 4; //20
     int steps = die1 + die2;
     lastRollSum = steps;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
@@ -87,7 +87,7 @@ void Player::receive(int amount) {
 
 bool Player::roll_testing(int die1, int die2) {
     posn = (posn + (die1 + die2)) % 40;
-    return true;
+    return (die1 == die2);
 }
 //bankrupt to another player
 void Player::bankrupt(Player *other) {
