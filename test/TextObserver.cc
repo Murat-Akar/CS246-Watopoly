@@ -42,6 +42,8 @@ void TextObserver::notify() {
             cout << leftLines[line];
             if (line == linesPerSquare - 1 && row == 8) {
                 cout << string(81, '_');
+            } else if (line == 2 && row == 4) {
+                cout << string(36, ' ') << "WATOPOLY" << string(37, ' ');
             } else {
                 cout << string(81, ' ');
             }
