@@ -32,7 +32,7 @@ public:
     void pay(int amount);
     void receive(int amount);
     void bankrupt(Player *other);
-    void bankrupt();
+    void bankrupt(vector<Player*>& players);
     void assets() const;
     void setPosition(int position);
     void trade(Player *other, int amount, const string &receiving);

@@ -86,11 +86,17 @@ void Player::bankrupt(Player *other) {
 }
 
 //bankrupt to the bank
-void Player::bankrupt() {
+void Player::bankrupt(vector<Player*>& players) {
     for (auto s : buildingsOwned) {
         PurchasableSquare *ps = static_cast<PurchasableSquare*>(s);
         ps->setOwner(nullptr);
     }
+
+    for (auto s : buildingsOwned) {
+        PurchasableSquare *ps = static_cast<PurchasableSquare*>(s);
+        ps->auction(players);
+    }
+
     buildingsOwned.clear();
 }
 

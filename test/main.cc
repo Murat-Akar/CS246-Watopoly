@@ -155,6 +155,7 @@ int main()
     {
         bool command_loop = true;
         bool canRoll = true;
+        bool is_bought = false;
         while (command_loop)
         {
             Player *p = players[currentPlayerIndex];
@@ -201,6 +202,7 @@ int main()
                 if (ps)
                 {
                     ps->buy(p);
+                    is_bought = true;
                 }
                 else
                 {
@@ -398,7 +400,7 @@ int main()
                 PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
                 if (ps) {
                         if (ps->getOwner() == p) {
-                            p->bankrupt();
+                            p->bankrupt(players);
                             players.erase(players.begin() + currentPlayerIndex);
                             cout << p->getName() << " is now out of the game and the Bank has taken all of their assets" << endl;
                         }
@@ -406,11 +408,20 @@ int main()
                             p->bankrupt(ps->getOwner());
                             players.erase(players.begin() + currentPlayerIndex);
                             cout << p->getName() << " is now out of the game and " << ps->getOwner() << " has take all of their assets" << endl;
+                            ps->auction(players);
                         }
                 }
              }
             else if (cmd == "next")
             {
+                if (!is_bought) {
+                    PurchasableSquare* ps = dynamic_cast<PurchasableSquare*>(board[pos]);
+                    if (ps) {
+                        ps->auction(players);
+                    } else {
+                        cout << "Not auctionable square." << endl;
+                    }
+                }
                 command_loop = false;
             }
             else if (cmd == "quit")
