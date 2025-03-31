@@ -170,7 +170,7 @@ int main(int argc, char* argv)
         {
             Player *p = players[currentPlayerIndex];
             cout << "\nAnyone can choose to (trade/mortgage/unmortgage) at anytime if resources allow. " << endl;
-            cout << p->getName() << "'s turn. (roll/next/buy/assets/all/improvements/bankrupt/quit/save): ";
+            cout << p->getName() << "'s turn. (roll/next/buy/assets/all/improve/bankrupt/quit/save): ";
             string cmd;
             cin >> cmd;
             int pos = p->getPosn();
@@ -379,12 +379,12 @@ int main(int argc, char* argv)
             }
             else if (cmd == "mortgage")
             {
-                string piece, building;
+                string piece, buildingName;
                 Player *mortgaging_player = nullptr;
                 cout << "Enter the piece of the player mortgaging: ";
                 cin >> piece;
                 cout << "Enter the Building Name: ";
-                cin >> building;
+                cin >> buildingName;
                 for (auto *pl : players)
                 {
                     if (pl->getPiece() == toupper(piece[0]))
@@ -395,18 +395,39 @@ int main(int argc, char* argv)
                 }
                 if (mortgaging_player)
                 {
-                    // Uncomment and implement mortgage logic here:
-                    // mortgaging_player->mortgage(building);
+                    bool found = false;
+                    // Loop over the player's owned buildings to find the matching building.
+                    for (auto s : mortgaging_player->buildingsOwned)
+                    {
+                        if (s->getName() == buildingName)
+                        {
+                            // Cast to PurchasableSquare and call mortgage().
+                            PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
+                            if (ps)
+                            {
+                                ps->mortgage();
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found)
+                    {
+                        cout << "Building " << buildingName << " not found among your properties." << endl;
+                    }
                 }
-            }
-            else if (cmd == "unmortgage")
+                else
+                {
+                    cout << "Player with piece " << piece << " not found." << endl;
+                }
+            } else if (cmd == "unmortgage")
             {
-                string piece, building;
+                string piece, buildingName;
                 Player *unmortgaging_player = nullptr;
                 cout << "Enter the piece of the player that is unmortgaging: ";
                 cin >> piece;
                 cout << "Enter the Building Name: ";
-                cin >> building;
+                cin >> buildingName;
                 for (auto *pl : players)
                 {
                     if (pl->getPiece() == toupper(piece[0]))
@@ -417,20 +438,41 @@ int main(int argc, char* argv)
                 }
                 if (unmortgaging_player)
                 {
-                    // Uncomment and implement unmortgage logic here:
-                    // unmortgaging_player->unmortgage(building);
+                    bool found = false;
+                    // Loop over the player's owned buildings to find the matching building.
+                    for (auto s : unmortgaging_player->buildingsOwned)
+                    {
+                        if (s->getName() == buildingName)
+                        {
+                            // Cast to PurchasableSquare and call unmortgage().
+                            PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(s);
+                            if (ps)
+                            {
+                                ps->unmortgage();
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found)
+                    {
+                        cout << "Building " << buildingName << " not found among your properties." << endl;
+                    }
                 }
-            }
-            else if (cmd == "improvements")
+                else
+                {
+                    cout << "Player with piece " << piece << " not found." << endl;
+                }
+            } else if (cmd == "improve")
             {
                 PurchasableSquare *ps = dynamic_cast<PurchasableSquare *>(board[pos]);
                 if (ps)
                 {
                     while (true)
                     {
-                        cout << "Select the Type Of Improvement You Would Like:\n"
-                             << "1) Add Improvement\n"
-                             << "2) Remove Improvement\n"
+                        cout << "Would you like to buy/sell?\n"
+                             << "1) Buy Improvement\n"
+                             << "2) Sell Improvement\n"
                              << "Enter Choice: ";
                         int code;
                         cin >> code;
@@ -454,8 +496,7 @@ int main(int argc, char* argv)
                 {
                     cout << "This is not an improvable square" << endl;
                 }
-            }
-            else if (cmd == "bankrupt") {
+            } else if (cmd == "bankrupt") {
                 PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
                 if (ps) {
                         if (ps->getOwner() == p) {
@@ -470,8 +511,7 @@ int main(int argc, char* argv)
                             ps->auction(players, currentPlayerIndex);
                         }
                 }
-             }
-            else if (cmd == "next")
+            } else if (cmd == "next")
             {
                 if (!is_bought) {
                     PurchasableSquare* ps = dynamic_cast<PurchasableSquare*>(board[pos]);

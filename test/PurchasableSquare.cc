@@ -141,7 +141,7 @@ void PurchasableSquare::inc_improvementLevel(Player *p) {
             cout << "You are not the owner of this square." << endl;
         }
     } else {
-        cout << "Not an improvable square or max improvement level reached." << endl;
+        cout << "Sorry, you do not own all the buildings in this monopoly block to improve it." << endl;
     }
 }
 
@@ -155,7 +155,7 @@ void PurchasableSquare::dec_improvementLevel(Player *p) {
             cout << "You are not the owner of this square." << endl;
         }
     } else {
-        cout << "Not an improvable square or minimum improvement level reached." << endl;
+        cout << "Sorry, you do not own all the buildings in this monopoly block to lower the improvement level." << endl;
     }
 }
 
