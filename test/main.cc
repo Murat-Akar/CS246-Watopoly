@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
                     cout << "Which building does " << accepterName << " own that you want to receive? ";
                     string buildingName;
                     cin >> buildingName;
-                    cout << accepterName << ", do you accept this trade? (1 = yes, 2 = no): ";
+                    cout << accepterName << ", do you accept this trade? (1 = accept, 2 = reject): ";
                     int acceptCode;
                     cin >> acceptCode;
                     if (acceptCode == 1)
@@ -377,7 +377,7 @@ int main(int argc, char* argv[])
                     cout << "Enter the building name that " << accepterName << " is offering: ";
                     string buildingWanted;
                     cin >> buildingWanted;
-                    cout << accepterName << ", do you accept this trade? (1 = yes, 2 = no): ";
+                    cout << accepterName << ", do you accept this trade? (1 = accept, 2 = reject): ";
                     int acceptCode;
                     cin >> acceptCode;
                     if (acceptCode == 1)
@@ -397,7 +397,7 @@ int main(int argc, char* argv[])
                     cout << "How much money do you want from " << accepterName << " in return? ";
                     int amount;
                     cin >> amount;
-                    cout << accepterName << ", do you accept this trade? (1 = yes, 2 = no): ";
+                    cout << accepterName << ", do you accept this trade? (1 = accept, 2 = reject): ";
                     int acceptCode;
                     cin >> acceptCode;
                     if (acceptCode == 1)
