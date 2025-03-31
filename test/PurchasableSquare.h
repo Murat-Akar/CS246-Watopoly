@@ -26,7 +26,8 @@ public:
     void inc_improvementLevel(Player *p);
     void dec_improvementLevel(Player *p);
     virtual bool landOn(Player *p) override;
-    
+    void setOwner(Player *new_owner);
+    Player* getOwner();
     // For use in isMonopoly checking.
     string getMonopolyBlock() const { return monopolyblockId; }
     int getImprovementLevels() const { return improvementLevels; }

@@ -159,7 +159,7 @@ int main()
         {
             Player *p = players[currentPlayerIndex];
             cout << "\nAnyone can choose to (trade/mortgage/unmortgage) at anytime if resources allow. " << endl;
-            cout << p->getName() << "'s turn. (roll/next/buy/assets/all/improvements/quit/save): ";
+            cout << p->getName() << "'s turn. (roll/next/buy/assets/all/improvements/bankrupt/quit/save): ";
             string cmd;
             cin >> cmd;
             int pos = p->getPosn();
@@ -394,6 +394,21 @@ int main()
                     cout << "This is not an improvable square" << endl;
                 }
             }
+            else if (cmd == "bankrupt") {
+                PurchasableSquare *ps = dynamic_cast<PurchasableSquare*>(board[pos]);
+                if (ps) {
+                        if (ps->getOwner() == p) {
+                            p->bankrupt();
+                            players.erase(currentPlayerIndex);
+                            cout << p->getName() << " is now out of the game and the Bank has taken all of their assets" << endl;
+                        }
+                        else {
+                            p->bankrupt(ps->getOwner());
+                            players.erase(currentPlayersIndex);
+                            cout << p->getName << " is now out of the game and " << ps->getOwner() << " has take all of their assets" << endl;
+                        }
+                }
+             }
             else if (cmd == "next")
             {
                 command_loop = false;

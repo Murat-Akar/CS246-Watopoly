@@ -26,6 +26,13 @@ void PurchasableSquare::buy(Player *p) {
         cout << "Insufficient Funds For Purchase" << endl;
     }
 }
+void PurchasableSquare::setOwner(Player *new_owner) {
+    owner = new_owner;
+}
+
+Player* PurchasableSquare::getOwner()  {
+    return owner;
+}
 
 bool PurchasableSquare::landOn(Player *p) {
     if (owner == nullptr) {
@@ -52,9 +59,14 @@ bool PurchasableSquare::landOn(Player *p) {
                 rent = pd->rentTable[improvementLevels];
             cout << p->getName() << " must pay $" << rent 
                  << " in rent for " << getName() << ".\n";
-            p->pay(rent);
-            owner->receive(rent);
-            return true;
+            if (p->getMoney() <= rent) {
+                cout << "You do not have enough funds to pay the owner you must raise funds by (mortgage/trade) or declare bankruptcy :<" << endl;
+            }
+            else {
+                p->pay(rent);
+                owner->receive(rent);
+                return true;
+            }
         }
     }
     else {

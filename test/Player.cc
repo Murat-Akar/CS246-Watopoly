@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Observer.h"
 #include "Square.h"
+#include "PurchasableSquare.h"
 #include <iostream>
 #include <algorithm>
 #include "PRNG.h"
@@ -77,9 +78,19 @@ void Player::receive(int amount) {
     money += amount;
 }
 
+//bankrupt to another player
 void Player::bankrupt(Player *other) {
     for(auto s : buildingsOwned)
         other->addBuilding(s);
+    buildingsOwned.clear();
+}
+
+//bankrupt to the bank
+void Player::bankrupt() {
+    for (auto s : buildingsOwned) {
+        PurchasableSquare *ps = static_cast<PurchasableSquare*>(s);
+        ps->setOwner(nullptr);
+    }
     buildingsOwned.clear();
 }
 

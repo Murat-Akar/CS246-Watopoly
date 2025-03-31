@@ -20,7 +20,6 @@ public:
 
     // Pure virtual: each square must define what happens when a player lands on it.
     virtual bool landOn(Player *p) = 0;
-
     // Getters
     const string& getName() const;
     int getRent() const;
