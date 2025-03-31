@@ -16,27 +16,26 @@ void saveGameState(const vector<Player*>& players, const vector<Square*>& board,
     out << players.size() << endl;
     out << currentPlayerIndex << endl;
     for (auto it = players.begin(); it != players.end(); ++it) {
+        // Assuming Tims Line is square 10.
         if ((*it)->getPosn() == 10) {
-            out << (*it)->getName() << " " << (*it)->getPiece() << " " 
-                << (*it)->getTimsCupsVal() << " " << (*it)->getMoney() << " " 
-                << (*it)->getPosn() << " " << (*it)->getTimsLineTurns() << endl;
-        } else {
-            out << (*it)->getName() << " " << (*it)->getPiece() << " " 
-                << (*it)->getTimsCupsVal() << " " << (*it)->getMoney() << " " 
-                << (*it)->getPosn() << endl;
+            out << (*it)->getName() << " " << (*it)->getPiece() << " " << (*it)->getTimsCupsVal()
+                << " " << (*it)->getMoney() << " " << (*it)->getPosn() << " " << (*it)->getTimsLineTurns() << endl;
         }
-        
+        else {
+            out << (*it)->getName() << " " << (*it)->getPiece() << " " << (*it)->getTimsCupsVal()
+                << " " << (*it)->getMoney() << " " << (*it)->getPosn() << endl;
+        }
     }
     for (auto it = board.begin(); it != board.end(); ++it) {
         PurchasableSquare *ps = dynamic_cast<PurchasableSquare *>((*it));
         if (ps) {
-            string name = (ps->getOwner() != nullptr) ? (ps->getOwner())->getName() : "";
-            out << ps->getName() << " " << name << " " << ps->getImprovementLevels() << endl;
+            string ownerName = (ps->getOwner() != nullptr) ? ps->getOwner()->getName() : "";
+            out << ps->getName() << " " << ownerName << " " << ps->getImprovementLevels() << endl;
         }
     }
-    cout << "Your file has now been saved as " << filename << "." << endl;
     out.close();
 }
+
 
 bool loadGameState(vector<Player*>& players, vector<Square*>& board, int &currentPlayerIndex, const string &filename) {
         ifstream in(filename);

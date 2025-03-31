@@ -30,23 +30,22 @@ extern PRNG prng1;        // declaration to use prng1 in another translation uni
 int main(int argc, char* argv[])
 {
     bool loadingMode = false;
+    string f;
     bool testingMode = false;
-    if (argc > 3) {
+    if (argc > 4) {
         cout << "Too many arguments provided. A max of 2 optional arguments allowed." << endl;
         return 1;
     }
     for (int i = 1; i < argc; i++) {
         string arg = argv[i];
-        if (arg != "--testingMode" && arg != "--loadingMode") {
-            cout << "One or more arguments you provided is not valid. Please use either --testingMode or --loadingMode flag or both." << endl;
-            return 1;
-        }
-        if (arg == "--testingMode") {
+        if (arg == "--testing") {
             testingMode = true;
         }
-
-        if (arg == "--loadingMode") {
+        if (arg == "--loading") {
             loadingMode = true;
+        }
+        else {
+            f = arg;
         }
     }
     // Randomize PRNG seeds.
@@ -57,7 +56,8 @@ int main(int argc, char* argv[])
 
     // Create players.
     vector<Player *> players;
-    cout << "Enter the Number of Players (2 - 6): " << endl;
+    if (loadingMode == false) {
+        cout << "Enter the Number of Players (2 - 6): " << endl;
     int num_of_players = 0;
     string line;
     while (true)
@@ -124,7 +124,8 @@ int main(int argc, char* argv[])
         }
         players.emplace_back(new Player{name, piece, 1500, 0, 0, false});
     }
-
+ }
+    
     // Create a board of 40 squares.
     vector<Square *> board(40, nullptr);
     board[0] = new CollectOSAPSquare(0, 200);
@@ -168,10 +169,17 @@ int main(int argc, char* argv[])
     board[38] = new CoopFeeSquare(38);
     board[39] = new PurchasableSquare("DC", 39, 400, true, "Math", 0, nullptr, false);
 
-    TextObserver observer(players, board);
-
-    bool gameOver = false;
     int currentPlayerIndex = 0;
+    if (loadingMode) {
+        if (loadGameState(players, board, currentPlayerIndex, f)) {
+            cout << "Your game has successfully loaded" << endl;
+        }
+        else {
+            cout << "Your game has not loaded properly" << endl;
+        }
+    }
+    TextObserver observer(players, board);
+    bool gameOver = false;
     while (!gameOver)
     {
         bool command_loop = true;

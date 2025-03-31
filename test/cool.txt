@@ -1,7 +1,6 @@
-2
+1
 0
-sam G 0 1650 0
-masood B 0 1500 10 1
+masood B 0 1500 15
 AL  0
 ML  0
 MKV  0
