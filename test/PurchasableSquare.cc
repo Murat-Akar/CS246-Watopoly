@@ -165,57 +165,112 @@ void PurchasableSquare::setImprovementLevels(int level) {
 void PurchasableSquare::auction(vector<Player*>& players, int idx) {
     int currentBid = 0;
     Player* highestBidder = nullptr;
-    players.erase(players.begin() + idx);
-    vector<Player*> remainingPlayers = players;  // Players still participating in the auction
-    
-    cout << "Auction for " << getName() << " begins!" << endl;
-    int count = 0;
 
-    while (remainingPlayers.size() >= 1) {
-        for (auto it = remainingPlayers.begin(); it != remainingPlayers.end(); count++) {
-            if (count == idx) {
-                it++;
-                continue;
-            }
-        
-            Player* bidder = *it;
-            cout << bidder->getName() << ", the current bid is $" << currentBid << ". Do you want to (b)id or (w)ithdraw? ";
-            char choice;
-            cin >> choice;
-            
-            if (choice == 'w' || choice == 'W') {
-                cout << bidder->getName() << " withdrew from the auction." << endl;
-                it = remainingPlayers.erase(it);  // Remove this player from the auction
-            } else if (choice == 'b' || choice == 'B') {
-                int totalBid;
-                cout << "Enter your total bid (must be more than $" << currentBid << "): ";
-                if (!(cin >> totalBid)) {
-                    cin.clear();
-                    cin.ignore();
-                }
-                
-                // Ensure the bid is higher than the last bid and the player can afford it
-                if (totalBid > currentBid && totalBid <= bidder->getMoney()) {
-                    currentBid = totalBid;
-                    highestBidder = bidder;
-                    cout << bidder->getName() << " bid $" << currentBid << "." << endl;
-                    ++it;  // Continue to the next player
-                } else if (totalBid <= currentBid) {
-                    cout << "Your bid must be higher than the current bid of $" << currentBid << "." << endl;
-                } else {
-                    cout << "Insufficient funds for this bid." << endl;
-                }
-            } else {
-                cout << "Invalid choice. Please choose (b)id or (w)ithdraw." << endl;
-            }
+    // Build a local vector of bidders that excludes the current player (at index idx)
+    vector<Player*> remainingPlayers;
+    for (size_t i = 0; i < players.size(); i++) {
+        if ((int)i != idx) {
+            remainingPlayers.push_back(players[i]);
         }
     }
 
-    // Auction ends when only one player is left
-    if (highestBidder != nullptr) {
-        cout << highestBidder->getName() << " wins the auction for " << getName() << " with a bid of $" << currentBid << "." << endl;
-        highestBidder->pay(currentBid);  // Deduct the amount from the winner
-        highestBidder->addBuilding(this);  // Transfer the property
+    cout << "Auction for " << getName() << " begins!" << endl;
+
+    // Auction rounds.
+    while (!remainingPlayers.empty()) {
+        // If only one bidder remains and they are already the highest bidder, end the auction.
+        if (remainingPlayers.size() == 1 && highestBidder == remainingPlayers.front()) {
+            break;
+        }
+
+        bool roundBid = false; // flag to detect any bid change in this round
+
+        if (remainingPlayers.size() == 1) {
+            // Single remaining bidder case.
+            Player* bidder = remainingPlayers.front();
+            char choice;
+            cout << bidder->getName() << ", the current bid is $" << currentBid
+                 << ". Do you want to (b)id or (w)ithdraw? ";
+            while (!(cin >> choice) || (choice != 'w' && choice != 'W' && choice != 'b' && choice != 'B')) {
+                cout << "Invalid choice. Please choose (b)id or (w)ithdraw: ";
+                cin.clear();
+                cin.ignore();
+            }
+            if (choice == 'w' || choice == 'W') {
+                cout << bidder->getName() << " withdrew from the auction." << endl;
+                remainingPlayers.erase(remainingPlayers.begin());
+                break; // Auction ends; property remains unowned.
+            } else if (choice == 'b' || choice == 'B') {
+                int totalBid;
+                cout << "Enter your total bid (must be more than $" << currentBid << "): ";
+                while (!(cin >> totalBid)) {
+                    cout << "Invalid amount. Please enter a valid number: ";
+                    cin.clear();
+                    cin.ignore();
+                }
+                if (totalBid > currentBid && totalBid <= bidder->getMoney()) {
+                    currentBid = totalBid;
+                    highestBidder = bidder;
+                    cout << bidder->getName() << " bids $" << currentBid << "." << endl;
+                    roundBid = true;
+                } else {
+                    if (totalBid <= currentBid)
+                        cout << "Your bid must be higher than the current bid of $" << currentBid << "." << endl;
+                    else
+                        cout << "Insufficient funds for this bid." << endl;
+                }
+                break; // End the round after the single prompt.
+            }
+        } else {
+            // Multiple bidders case.
+            for (auto it = remainingPlayers.begin(); it != remainingPlayers.end(); ) {
+                Player* bidder = *it;
+                char choice;
+                cout << bidder->getName() << ", the current bid is $" << currentBid
+                     << ". Do you want to (b)id or (w)ithdraw? ";
+                while (!(cin >> choice) || (choice != 'w' && choice != 'W' && choice != 'b' && choice != 'B')) {
+                    cout << "Invalid choice. Please choose (b)id or (w)ithdraw: ";
+                    cin.clear();
+                    cin.ignore();
+                }
+                if (choice == 'w' || choice == 'W') {
+                    cout << bidder->getName() << " withdrew from the auction." << endl;
+                    it = remainingPlayers.erase(it);  // Remove bidder from local vector.
+                } else if (choice == 'b' || choice == 'B') {
+                    int totalBid;
+                    cout << "Enter your total bid (must be more than $" << currentBid << "): ";
+                    while (!(cin >> totalBid)) {
+                        cout << "Invalid amount. Please enter a valid number: ";
+                        cin.clear();
+                        cin.ignore();
+                    }
+                    if (totalBid > currentBid && totalBid <= bidder->getMoney()) {
+                        currentBid = totalBid;
+                        highestBidder = bidder;
+                        cout << bidder->getName() << " bids $" << currentBid << "." << endl;
+                        roundBid = true;
+                        ++it;
+                    } else {
+                        if (totalBid <= currentBid)
+                            cout << "Your bid must be higher than the current bid of $" << currentBid << "." << endl;
+                        else
+                            cout << "Insufficient funds for this bid." << endl;
+                        // Do not increment iterator so bidder can try again.
+                    }
+                }
+            }
+        }
+        // End bidding rounds if no bid was made in this round.
+        if (!roundBid)
+            break;
+    }
+
+    // Award the property if there is a valid highest bid.
+    if (highestBidder != nullptr && currentBid > 0) {
+        cout << highestBidder->getName() << " wins the auction for " << getName()
+             << " with a bid of $" << currentBid << "." << endl;
+        highestBidder->pay(currentBid);  // Deduct the bid amount from the winner.
+        highestBidder->addBuilding(this);  // Transfer the property.
     } else {
         cout << "No one bid. The property remains unowned." << endl;
     }
