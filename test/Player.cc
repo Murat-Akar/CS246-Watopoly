@@ -19,8 +19,8 @@ bool Player::roll() {
     //int  die1 = prng1(1,6); 
     //int  die2 = prng1(1,6);
     int oldPos = posn;
-    int die1 = 10;
-    int die2 = 20;
+    int die1 = 1; //10
+    int die2 = 3; //20
     int steps = die1 + die2;
     lastRollSum = steps;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
