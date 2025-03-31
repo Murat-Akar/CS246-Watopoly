@@ -27,17 +27,28 @@ int totalCups = 0;
 PRNG prng1, prng2, prng3; // global PRNG instances
 extern PRNG prng1;        // declaration to use prng1 in another translation unit
 
-/* TESTING HARNESS FOR ROLL
-int d1, d2;
-cout << "Enter Value Of First Die:";
-cin >> d1;
-cout << "\nEnter Value Of Second Die:" << endl;
-cin >> d2;
-bool doubles = p->roll_testing(d1, d2);
-// END OF TESTING HARNESS FOR ROLL*/
-
 int main(int argc, char* argv[])
 {
+    bool loadingMode = false;
+    bool testingMode = false;
+    if (argc > 3) {
+        cout << "Too many arguments provided. A max of 2 optional arguments allowed." << endl;
+        return 1;
+    }
+    for (int i = 1; i < argc; i++) {
+        string arg = argv[i];
+        if (arg != "--testingMode" && arg != "--loadingMode") {
+            cout << "One or more arguments you provided is not valid. Please use either --testingMode or --loadingMode flag or both." << endl;
+            return 1;
+        }
+        if (arg == "--testingMode") {
+            testingMode = true;
+        }
+
+        if (arg == "--loadingMode") {
+            loadingMode = true;
+        }
+    }
     // Randomize PRNG seeds.
     uint32_t seed = getpid();
     prng1.seed(seed);
@@ -180,11 +191,39 @@ int main(int argc, char* argv[])
                     cout << "You have already rolled this turn. Please choose another command." << endl;
                 } else {
                     oldPos = p->getPosn();
-                    bool doubles = p->roll();
-                    int newPos = p->getPosn();
-                    cout << p->getName() << " (" << p->getPiece() << ") landed on " 
-                         << board[newPos]->getName() << ".\n";
-                    board[newPos]->landOn(p);
+                    bool doubles;
+                    int newPos;
+                    if (testingMode) {
+                        int d1;
+                        cout << "Enter Value Of First Die: ";
+                        while (!(cin >> d1) || d1 < 1 || d1 > 6) {
+                            cin.clear();
+                            cin.ignore();
+                            cout << "Invalid input. Please enter a number between 1 and 6 for the first die: ";
+                        }
+                        cin.ignore();
+                        int d2;
+                        cout << "\nEnter Value Of Second Die: ";
+                        while (!(cin >> d2) || d2 < 1 || d2 > 6) {
+                            cin.clear();
+                            cin.ignore();
+                            cout << "Invalid input. Please enter a number between 1 and 6 for the second die: ";
+                        }
+                        cin.ignore();
+                        
+                        doubles = p->roll_testing(d1, d2);
+                        newPos = p->getPosn();
+                        cout << p->getName() << " (" << p->getPiece() << ") landed on " 
+                             << board[newPos]->getName() << ".\n";
+                        board[newPos]->landOn(p);
+                    } else {
+                        // Normal roll.
+                        doubles = p->roll();
+                        newPos = p->getPosn();
+                        cout << p->getName() << " (" << p->getPiece() << ") landed on " 
+                             << board[newPos]->getName() << ".\n";
+                        board[newPos]->landOn(p);
+                    }
                     
                     // Check if the player is in DC Tims Line and was sent there.
                     if (p->getPosn() == 10 && p->isSentToTims()) {

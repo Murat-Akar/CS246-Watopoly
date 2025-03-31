@@ -87,7 +87,7 @@ void Player::receive(int amount) {
 
 bool Player::roll_testing(int die1, int die2) {
     posn = (posn + (die1 + die2)) % 40;
-    return true;
+    return (die1 == die2);
 }
 //bankrupt to another player
 void Player::bankrupt(Player *other) {
