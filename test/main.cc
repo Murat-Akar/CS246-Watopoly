@@ -399,13 +399,13 @@ int main()
                 if (ps) {
                         if (ps->getOwner() == p) {
                             p->bankrupt();
-                            players.erase(currentPlayerIndex);
+                            players.erase(players.begin() + currentPlayerIndex);
                             cout << p->getName() << " is now out of the game and the Bank has taken all of their assets" << endl;
                         }
                         else {
                             p->bankrupt(ps->getOwner());
-                            players.erase(currentPlayersIndex);
-                            cout << p->getName << " is now out of the game and " << ps->getOwner() << " has take all of their assets" << endl;
+                            players.erase(players.begin() + currentPlayerIndex);
+                            cout << p->getName() << " is now out of the game and " << ps->getOwner() << " has take all of their assets" << endl;
                         }
                 }
              }

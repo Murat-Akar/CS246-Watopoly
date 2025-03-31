@@ -73,6 +73,7 @@ bool PurchasableSquare::landOn(Player *p) {
         cout << p->getName() << " landed on their own property " << getName() << ".\n";
         return true;
     }
+    return false;
 }
 
 bool PurchasableSquare::isMonopoly() {
