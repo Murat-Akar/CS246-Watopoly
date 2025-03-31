@@ -7,7 +7,6 @@ using namespace std;
 
 extern int totalCups; // Keeping track of total cups across all players
 
-
 NeedlesHallSquare::NeedlesHallSquare(int posn)
     : ActionSquare("NEEDLES HALL", posn) {
 }
@@ -18,7 +17,8 @@ void NeedlesHallSquare::applyAction(Player *p) {
     if (totalCups < 4 && prng(1, 100) <= 1) {
         cout << p->getName() << " receives a Roll Up the Rim cup!\n";
         p->receivedCup(); 
-        totalCups++; 
+        totalCups++;
+        return;
     }
 
     int roll = prng(1, 18);

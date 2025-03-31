@@ -20,7 +20,7 @@ bool Player::roll() {
     int  die2 = prng1(1,6);
     //int oldPos = posn;
     //int die1 = 1; //10
-    //int die2 = 3; //20
+    //int die2 = 1; //20
     int steps = die1 + die2;
     lastRollSum = steps;
     cout << name << " rolled a " << die1 << " and a " << die2 << endl;
@@ -112,10 +112,15 @@ void Player::bankrupt(vector<Player*>& players) {
 }
 
 void Player::assets() const {
-    for(auto s : buildingsOwned)
+    if (buildingsOwned.size() == 0) {
+        cout << "You currently have $" << getMoney() << " in cash and no other assets." << endl;
+    } else {
+        cout << "You own the following assets:" << endl;
+        for(auto s : buildingsOwned)
         cout << "Building: " << s->getName() << endl;
-
-    cout << "You also have $" << getMoney() << endl;
+        cout << "You also have $" << getMoney() << endl;
+    }
+   
 }
 
 void Player::setSentToTims(bool value) {
@@ -158,12 +163,12 @@ void Player::useCup() {
 
 void Player::trade(Player *other, int amount, const string &receiving) {
     if(money >= amount) {
-        pay(amount);
-        other->receive(amount);
         for(auto it = other->buildingsOwned.begin(); it != other->buildingsOwned.end(); ) {
             if((*it)->getName() == receiving) {
                 addBuilding(*it);
                 it = other->buildingsOwned.erase(it);
+                pay(amount);
+                other->receive(amount);
                 return;
             } else {
                 ++it;
@@ -200,8 +205,6 @@ void Player::trade(Player *other, const string &trading, const string &receiving
 void Player::trade(Player *other, const string &receiving, int amount) {
     // Check if the other player has enough money.
     if(other->getMoney() >= amount) {
-        other->pay(amount);    // Other pays the amount.
-        receive(amount);       // Trader receives the amount.
         // Look for the building in the trader's own properties.
         for(auto it = buildingsOwned.begin(); it != buildingsOwned.end(); ) {
             if((*it)->getName() == receiving) {
@@ -210,6 +213,8 @@ void Player::trade(Player *other, const string &receiving, int amount) {
                 it = buildingsOwned.erase(it);
                 cout << name << " traded " << receiving << " for $" << amount 
                         << " from " << other->getName() << endl;
+                other->pay(amount);    // Other pays the amount.
+                receive(amount);       // Trader receives the amount.
                 return;
             } else {
                 ++it;

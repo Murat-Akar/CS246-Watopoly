@@ -26,7 +26,8 @@ void SLCSquare::applyAction(Player *p) {
     if (totalCups < 4 && prng(1, 100) <= 1) { 
         cout << p->getName() << " receives a Roll Up the Rim cup!\n";
         p->receivedCup();
-        totalCups++;  
+        totalCups++;
+        return;  
     }
 
     if (roll <= 3) { 
