@@ -14,16 +14,16 @@
 using namespace std;
 
 extern int totalCups; // Global variable for total cups
+extern PRNG prng1;    // Global PRNG seeded in main
 
 SLCSquare::SLCSquare(int posn)
     : ActionSquare("SLC", posn) {
 }
 
 void SLCSquare::applyAction(Player *p) {
-    static PRNG prng;
-    int roll = prng(1, 24);
+    int roll = prng1(1, 24);
 
-    if (totalCups < 4 && prng(1, 100) <= 1) { 
+    if (totalCups < 4 && prng1(1, 100) <= 1) { 
         cout << p->getName() << " receives a Roll Up the Rim cup!\n";
         p->receivedCup();
         totalCups++;
