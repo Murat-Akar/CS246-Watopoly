@@ -309,8 +309,10 @@ int main(int argc, char* argv[])
                 PurchasableSquare *ps = dynamic_cast<PurchasableSquare *>(board[pos]);
                 if (ps)
                 {
-                    ps->buy(p);
-                    is_bought = true;
+                    ps->buy(p); 
+                    if (ps->getOwner() == p) {
+                        is_bought = true;
+                    }
                 }
                 else
                 {
@@ -577,7 +579,7 @@ int main(int argc, char* argv[])
                     if (ps) {
                         ps->auction(players, currentPlayerIndex);
                     } else {
-                        cout << "Not auctionable square." << endl;
+                        cout << "Not an auctionable square." << endl;
                     }
                 }
                 command_loop = false;
@@ -596,6 +598,12 @@ int main(int argc, char* argv[])
             cout << " " << setfill('_') << setw(98) << "_" << endl;
             observer.notify();
         }
+
+        if (players.empty()) {
+            cout << "No players remaining. Game over." << endl;
+            break;
+        }
+
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
 
