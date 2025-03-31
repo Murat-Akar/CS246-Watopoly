@@ -13,7 +13,8 @@
 #include <iostream>
 using namespace std;
 
-extern int totalCups; 
+extern int totalCups;
+extern PRNG prng1;
 
 SLCSquare::SLCSquare(int posn)
     : ActionSquare("SLC", posn) {
