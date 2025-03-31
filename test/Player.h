@@ -32,12 +32,22 @@ public:
     void pay(int amount);
     void receive(int amount);
     void bankrupt(Player *other);
-    void bankrupt();
+    void bankrupt(vector<Player*>& players);
     void assets() const;
     void setPosition(int position);
     void trade(Player *other, int amount, const string &receiving);
     void trade(Player *other, const string &trading, const string &receiving);
     void trade(Player *other, const string &receiving, int amount);
+    void setSentToTims(bool value);
+    bool isSentToTims() const;
+    void setPassedOSAP(bool value);
+    bool hasPassedOSAP() const;
+    void incrementTimsLineTurns();
+    void resetTimsLineTurns();
+    int getTimsLineTurns() const;
+    void setTimsLineSwitch();
+    void useCup();
+    int getLastRollSum() const;
 
     // Observer pattern methods (currently no-op implementations).
     void attach(Observer* o);
@@ -50,6 +60,10 @@ private:
     int posn;
     int timsCups;
     bool inTimsLine;
+    bool sentToTims;
+    bool passedOSAP;
+    int timsLineTurns;
+    int lastRollSum;
 };
 
 #endif // PLAYER_H

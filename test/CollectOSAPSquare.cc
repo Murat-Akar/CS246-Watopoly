@@ -6,6 +6,5 @@ CollectOSAPSquare::CollectOSAPSquare(int posn, int amount)
 }
 
 void CollectOSAPSquare::applyAction(Player *p) {
-    cout << p->getName() << " collects $" << collectAmount << " from OSAP.\n";
-    p->receive(collectAmount);
+    // We aren't going to do anything here because we will handle collecting OSAP in main.cc
 }
