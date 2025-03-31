@@ -31,7 +31,7 @@ public:
     // For use in isMonopoly checking.
     string getMonopolyBlock() const { return monopolyblockId; }
     int getImprovementLevels() const { return improvementLevels; }
-    void auction(vector<Player*>& players);
+    void auction(vector<Player*>& players, int idx);
 };
 
 #endif // PURCHASABLE_SQUARE_H
